@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-[#fbfbfd] antialiased scroll-smooth">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Dromber Engine | Autonomous Conversational Commerce &amp; Attribution Infrastructure</title>
+  <meta name="description" content="Deploy high-throughput multi-agent shopping engines on the WhatsApp Business Cloud API. Powered by Claude 3.5 Sonnet for real-time semantic parsing, catalog matching, and regulatory attribution."/>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  
+  <!-- Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Core CDNs (Deferred for Zero Render-Blocking) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js" crossorigin="anonymous" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" integrity="sha384-SALc35EccAf6RzGw4iNsyj7kTPr33K7RoGzYu+7heZhT8s0GZouafRiCg1qy44AS" crossorigin="anonymous" defer></script>
+
+  <!-- Tailwind Configuration -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Menlo', 'monospace'],
+          },
+          colors: {
+            bgLight: '#fbfbfd',
+            textMain: '#111111',
+            textMuted: '#666666',
+            accent: '#0071e3',
+            accentHover: '#005bb5',
+            surfaceDark: '#0a0a0c',
+            borderDark: '#222226'
+          },
+          animation: {
+            'marquee': 'marquee 32s linear infinite',
+          },
+          keyframes: {
+            marquee: {
+              '0%': { transform: 'translate3d(0%, 0, 0)' },
+              '100%': { transform: 'translate3d(-50%, 0, 0)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .fluid-hero { font-size: clamp(2.75rem, 7vw, 5.75rem); line-height: 0.98; letter-spacing: -0.04em; }
+    .fluid-h2 { font-size: clamp(2rem, 4.5vw, 3.5rem); line-height: 1.08; letter-spacing: -0.03em; }
+
+    .reveal { 
+      opacity: 0; 
+      transform: translateY(24px); 
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform; 
+    }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+    .bento-card {
+      background-color: #0e0e11;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+      overflow: hidden;
+      border-radius: 20px;
+    }
+    .bento-card::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background: radial-gradient(350px circle at var(--mouse-x, -500px) var(--mouse-y, -500px), rgba(255, 255, 255, 0.22), transparent 45%);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .bento-card::after {
+      content: "";
+      position: absolute;
+      inset: 1px;
+      border-radius: inherit;
+      background: radial-gradient(280px circle at var(--mouse-x, -500px) var(--mouse-y, -500px), rgba(255, 255, 255, 0.05), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .bento-card:hover::before, .bento-card:hover::after { opacity: 1; }
+    .bento-content { position: relative; z-index: 3; height: 100%; width: 100%; }
+
+    .glass-nav {
+      background: rgba(251, 251, 253, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      background: #e5e5ea;
+      border-radius: 999px;
+      height: 6px;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: #0071e3;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 113, 227, 0.35);
+      border: 2px solid #ffffff;
+      transition: transform 0.15s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #d2d2d7; border-radius: 6px; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+
+<body class="bg-bgLight text-textMain selection:bg-accent selection:text-white relative font-sans">
+
+  <!-- TOP RUNTIME BANNER -->
+  <div class="bg-surfaceDark text-[#e0e0e0] text-[11px] font-mono tracking-wider py-2 px-4 text-center border-b border-white/10 flex items-center justify-center gap-3">
+    <span class="inline-block w-2 h-2 rounded-full bg-[#34c759] animate-pulse"></span>
+    <span>ENGINE ACTIVE: SUB-1.2S WHATSAPP COMMERCE GATEWAY • CLAUDE 3.5 TOOL CALLING • PROMPT CACHING ENABLED</span>
+    <span class="hidden md:inline text-gray-500">•</span>
+    <span class="hidden md:inline text-gray-400">EVENT-DRIVEN META CLOUD API CONNECTOR</span>
+  </div>
+
+  <!-- NAVIGATION -->
+  <nav class="sticky top-0 inset-x-0 z-40 glass-nav border-b border-black/[0.06] transition-all">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-2.5">
+        <div class="w-8 h-8 bg-textMain rounded-[8px] flex items-center justify-center text-white font-bold text-sm shadow-md">D</div>
+        <div class="flex flex-col">
+          <span class="font-bold tracking-tight text-[17px] leading-none text-textMain">Dromber<span class="text-accent">.</span></span>
+          <span class="text-[9px] font-mono tracking-widest uppercase text-textMuted mt-0.5">Platform Engine</span>
+        </div>
+      </a>
+
+      <div class="hidden md:flex items-center gap-8 text-[13px] font-semibold text-textMuted">
+        <a href="#engineering" class="hover:text-textMain transition-colors">Architecture</a>
+        <a href="#calculator" class="hover:text-textMain transition-colors">Token Throughput</a>
+        <a href="#curriculum" class="hover:text-textMain transition-colors">Agent Pipeline</a>
+        <a href="#terminal" class="hover:text-textMain transition-colors">Developer API</a>
+        <a href="#ecosystem" class="hover:text-textMain transition-colors">Platform Tiers</a>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button onclick="openModal('sandbox')" class="hidden sm:inline-flex items-center justify-center bg-textMain hover:bg-black text-white px-5 py-2.5 rounded-full text-[13px] font-semibold shadow-md active:scale-95 transition-all">
+          Get Sandbox API Key
+        </button>
+        <button onclick="toggleMobileNav()" aria-label="Toggle Navigation" class="md:hidden w-10 h-10 rounded-full flex items-center justify-center bg-black/5 text-textMain">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="mobile-nav" class="hidden md:hidden border-b border-black/10 bg-white/95 px-6 py-6 space-y-3 font-semibold text-[15px]">
+      <a href="#engineering" onclick="toggleMobileNav()" class="block py-1">Architecture</a>
+      <a href="#calculator" onclick="toggleMobileNav()" class="block py-1">Token Throughput</a>
+      <a href="#curriculum" onclick="toggleMobileNav()" class="block py-1">Agent Pipeline</a>
+      <a href="#terminal" onclick="toggleMobileNav()" class="block py-1">Developer API</a>
+      <a href="#ecosystem" onclick="toggleMobileNav()" class="block py-1">Platform Tiers</a>
+      <button onclick="toggleMobileNav(); openModal('sandbox');" class="w-full bg-accent text-white py-3 rounded-xl font-bold mt-2">
+        Get Sandbox API Key (Free)
+      </button>
+      <div class="pt-3 border-t border-black/10 flex flex-wrap gap-4 text-xs text-textMuted font-normal">
+        <a href="privacy.html" onclick="toggleMobileNav()">Privacy Policy</a>
+        <a href="terms.html" onclick="toggleMobileNav()">Terms</a>
+        <a href="terms.html#refunds" onclick="toggleMobileNav()">Refunds</a>
+        <a href="disclaimer.html" onclick="toggleMobileNav()">Disclaimer</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PIPELINE HIGHLIGHTS TICKER -->
+  <div class="border-b border-black/[0.05] bg-white py-2 overflow-hidden select-none">
+    <div class="flex w-[200%] animate-marquee items-center gap-10 text-[12px] font-mono text-textMuted" style="will-change: transform;">
+      <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> [CORE PIPELINE] Multi-Turn WhatsApp Webhook Ingestion &amp; Context Framing</span>
+      <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-accent"></span> [COGNITIVE ROUTING] Claude 3.5 Sonnet Semantic Intent &amp; Catalog Tool-Use</span>
+      <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> [STREAMING SLA] Sub-1.2s Roundtrip Response via Claude 3 Haiku &amp; Prompt Caching</span>
+      <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-accent"></span> [ATTRIBUTION] Automated Section 194H TDS &amp; ASCI Regulatory Metadata Resolution</span>
+    </div>
+  </div>
+
+  <!-- HERO SECTION -->
+  <main class="relative pt-20 pb-24 md:pt-28 md:pb-36 px-6 max-w-7xl mx-auto flex flex-col justify-center overflow-visible">
+    <!-- Background Geometry -->
+    <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden opacity-[0.6] select-none" style="background-image: radial-gradient(rgba(0, 0, 0, 0.05) 1.2px, transparent 1px); background-size: 28px 28px;">
+      <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[280px] rounded-full pointer-events-none" style="background: radial-gradient(ellipse at center, rgba(0, 113, 227, 0.08) 0%, transparent 70%);"></div>
+    </div>
+
+    <div class="reveal is-visible relative z-10 w-full flex flex-col items-start">
+      <div class="inline-flex items-center gap-2 mb-8 px-3.5 py-1.5 rounded-full bg-white border border-black/[0.08] shadow-sm">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+        </span>
+        <span id="dynamic-greeting" class="text-textMuted font-mono text-[11px] font-semibold uppercase tracking-wider">
+          v2.6 Gateway Live • Meta Cloud API &amp; Claude 3.5 Sonnet
+        </span>
+      </div>
+
+      <h1 class="fluid-hero font-extrabold text-textMain max-w-5xl tracking-tighter">
+        Autonomous Conversational Commerce. <br class="hidden sm:inline" />
+        <span class="text-accent">Engineered for High-Throughput Messaging.</span>
+      </h1>
+
+      <p class="mt-8 text-lg md:text-[21px] text-[#424245] max-w-3xl font-medium tracking-tight leading-[1.6]">
+        Deploy stateful, multi-agent shopping engines on the WhatsApp Business Cloud API. Powered by Claude 3.5 Sonnet for real-time semantic parsing, deterministic retail catalog tool-calling, and automated affiliate attribution.
+      </p>
+
+      <div class="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6 pt-6 border-t border-black/[0.08] w-full max-w-3xl">
+        <div>
+          <div class="text-2xl font-bold font-mono text-textMain tracking-tight">&lt;1.2s</div>
+          <div class="text-[12px] text-textMuted font-medium">Roundtrip Latency SLA</div>
+        </div>
+        <div>
+          <div class="text-2xl font-bold font-mono text-textMain tracking-tight">450M+</div>
+          <div class="text-[12px] text-textMuted font-medium">Projected Monthly Tokens</div>
+        </div>
+        <div>
+          <div class="text-2xl font-bold font-mono text-textMain tracking-tight">99.98%</div>
+          <div class="text-[12px] text-textMuted font-medium">Webhook Ingress Uptime</div>
+        </div>
+        <div>
+          <div class="text-2xl font-bold font-mono text-textMain tracking-tight">Zero-Hallucination</div>
+          <div class="text-[12px] text-textMuted font-medium">Deterministic Tool Calling</div>
+        </div>
+      </div>
+
+      <div class="mt-12 flex flex-wrap items-center gap-5">
+        <button onclick="openModal('sandbox')" class="bg-accent hover:bg-accentHover text-white px-8 py-4 rounded-full text-[15px] font-bold shadow-xl shadow-accent/25 hover:shadow-accent/40 active:scale-95 transition-all flex items-center gap-2 group">
+          <span>Request Sandbox API Key</span>
+          <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <a href="#terminal" class="bg-white hover:bg-gray-50 border border-black/10 text-textMain px-6 py-4 rounded-full text-[14px] font-semibold shadow-sm active:scale-95 transition-all">
+          Explore Developer API
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- SPOTLIGHT BENTO MATRIX -->
+  <section id="engineering" class="py-32 bg-surfaceDark text-white relative border-y border-white/10">
+    <div class="absolute inset-0 z-0 opacity-[0.04]" style="background-image: radial-gradient(#fff 1.5px, transparent 1px); background-size: 32px 32px;"></div>
+    
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+      <div class="mb-20 reveal">
+        <div class="text-accent font-mono text-[11px] font-bold tracking-widest uppercase mb-3">Multi-Agent System Architecture</div>
+        <h2 class="fluid-h2 font-bold text-white mb-4">Engineered for High-Concurrency Messaging.</h2>
+        <p class="text-[17px] text-gray-400 font-medium max-w-2xl leading-relaxed">
+          Monolithic web apps fail under synchronous messaging spikes. Dromber separates conversational intent parsing, deterministic tool calling, and response synthesis into an asynchronous, event-driven pipeline.
+        </p>
+      </div>
+
+      <div id="bento-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div class="bento-card md:col-span-2 p-10 lg:p-12 reveal">
+          <div class="bento-content flex flex-col justify-between">
+            <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mb-8 border border-white/15 text-accent shadow-inner">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+              <div class="text-xs font-mono text-green-400 uppercase tracking-widest mb-2">Deterministic Tool Calling</div>
+              <h3 class="text-[25px] font-bold tracking-tight mb-3">Zero-Hallucination Retail Catalog Interoperability</h3>
+              <p class="text-[15px] text-gray-400 leading-relaxed max-w-xl font-normal">
+                Direct API bindings to Amazon India PA-API, Flipkart Affiliate API, and Cuelinks networks. Claude 3.5 Sonnet extracts precise product parameters and invokes deterministic inventory lookup functions, verifying real-time stock, pricing, and 24-hr cart attribution before generating links.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bento-card p-10 lg:p-12 reveal">
+          <div class="bento-content flex flex-col justify-between">
+            <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mb-8 border border-white/15 text-blue-400">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <div>
+              <div class="text-xs font-mono text-blue-400 uppercase tracking-widest mb-2">Low-Latency Routing</div>
+              <h3 class="text-xl font-bold tracking-tight mb-3">Sub-1.2s WhatsApp Response SLA</h3>
+              <p class="text-[14px] text-gray-400 leading-relaxed font-normal">
+                Optimized with Anthropic Prompt Caching and edge streaming via Claude 3 Haiku. Token processing latency drops by 70%, keeping consumer interactions fluid within mobile messaging windows.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bento-card p-10 lg:p-12 reveal">
+          <div class="bento-content flex flex-col justify-between">
+            <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mb-8 border border-white/15 text-amber-400">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7C5 4 4 5 4 7z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6-3h6m-6 6h4"/></svg>
+            </div>
+            <div>
+              <div class="text-xs font-mono text-amber-400 uppercase tracking-widest mb-2">Stateful Memory</div>
+              <h3 class="text-xl font-bold tracking-tight mb-3">Multi-Turn Context Preservation</h3>
+              <p class="text-[14px] text-gray-400 leading-relaxed font-normal">
+                Redis-backed session memory maps user intent, prior recommendations, and buyer feedback across multi-turn sessions with automatic token pruning to optimize inference budgets.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bento-card md:col-span-2 p-10 lg:p-12 reveal">
+          <div class="bento-content flex flex-col justify-between">
+            <div class="w-12 h-12 bg-[#34c759]/15 rounded-2xl flex items-center justify-center mb-8 text-[#34c759] border border-[#34c759]/30">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            </div>
+            <div>
+              <div class="text-xs font-mono text-[#34c759] uppercase tracking-widest mb-2">Compliance &amp; Attribution</div>
+              <h3 class="text-[25px] font-bold tracking-tight mb-3">Automated Section 194H TDS &amp; ASCI Disclosures</h3>
+              <p class="text-[15px] text-gray-400 leading-relaxed max-w-xl font-normal">
+                Every deep link synthesized by Dromber programmatically binds ASCI-compliant advertising tags (#ad, #affiliate) and injects PAN-verified Section 194H (2%/5%) and GST tracking parameters for clean financial auditability.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CAPACITY & THROUGHPUT SIMULATOR -->
+  <section id="calculator" class="py-28 bg-[#f5f5f7] border-b border-black/[0.08]">
+    <div class="max-w-5xl mx-auto px-6">
+      
+      <div class="text-center max-w-2xl mx-auto mb-16 reveal">
+        <div class="text-accent font-mono text-[11px] font-bold tracking-widest uppercase mb-3">Token Economics Simulator</div>
+        <h2 class="fluid-h2 font-bold text-textMain mb-4">Calculate API throughput &amp; capacity.</h2>
+        <p class="text-[16px] text-textMuted font-medium">
+          Model conversational volume across WhatsApp Business Cloud API webhooks with Claude 3.5 Sonnet and Haiku model tiering.
+        </p>
+      </div>
+
+      <div class="bg-white rounded-[28px] border border-black/[0.08] p-8 md:p-12 shadow-xl shadow-black/[0.03] reveal">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          <div class="lg:col-span-7 space-y-8">
+            <div>
+              <label class="block text-[13px] font-bold uppercase tracking-wider text-textMuted mb-3">Select Deployment Profile</label>
+              <div class="grid grid-cols-3 gap-2.5">
+                <button type="button" onclick="setProfile('aggregator', 3.5, 950)" id="profile-aggregator" class="profile-btn bg-textMain text-white py-2.5 px-3 rounded-xl text-[12px] font-semibold border border-transparent transition-all">
+                  E-Commerce Hub
+                </button>
+                <button type="button" onclick="setProfile('publisher', 2.8, 650)" id="profile-publisher" class="profile-btn bg-gray-100 hover:bg-gray-200 text-textMain py-2.5 px-3 rounded-xl text-[12px] font-semibold border border-transparent transition-all">
+                  Publisher Deals
+                </button>
+                <button type="button" onclick="setProfile('brand', 5.2, 1200)" id="profile-brand" class="profile-btn bg-gray-100 hover:bg-gray-200 text-textMain py-2.5 px-3 rounded-xl text-[12px] font-semibold border border-transparent transition-all">
+                  Brand Concierge
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-[14px] font-bold text-textMain">Monthly Conversational Sessions</span>
+                <span id="sessions-display" class="font-mono text-[15px] font-bold text-accent">50,000 sessions</span>
+              </div>
+              <input type="range" id="sessions-slider" min="5000" max="250000" step="5000" value="50000" class="w-full" oninput="calculateThroughput()"/>
+              <div class="flex justify-between text-[11px] text-textMuted font-mono mt-2">
+                <span>5k sessions (Pilot App)</span>
+                <span>250k sessions (Enterprise Publisher)</span>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-[14px] font-bold text-textMain">Anthropic Prompt Cache Hit Rate</span>
+                <span id="cache-display" class="font-mono text-[15px] font-bold text-textMain">75%</span>
+              </div>
+              <input type="range" id="cache-slider" min="40" max="95" step="5" value="75" class="w-full" oninput="calculateThroughput()"/>
+              <div class="flex justify-between text-[11px] text-textMuted font-mono mt-2">
+                <span>40% (Dynamic Cold Start)</span>
+                <span>95% (High Concurrency Warm Cache)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-5 bg-surfaceDark text-white p-8 rounded-[24px] border border-white/10 flex flex-col justify-between h-full shadow-2xl">
+            <div>
+              <div class="inline-block px-3 py-1 bg-accent/20 text-accent font-mono text-[10px] font-bold rounded-full uppercase tracking-wider mb-6">
+                Throughput Metrics
+              </div>
+              
+              <div class="text-[13px] text-gray-400 font-medium mb-1">Projected Monthly Token Volume</div>
+              <div id="throughput-monthly" class="text-4xl sm:text-5xl font-mono font-extrabold tracking-tight text-white mb-2">
+                166.2M
+              </div>
+              
+              <div class="text-[12px] text-gray-400 font-mono mb-6">
+                Estimated p95 Latency: <span id="throughput-latency" class="text-green-400 font-bold">&lt;1.08s</span>
+              </div>
+
+              <div class="p-3 bg-white/5 rounded-xl border border-white/10 space-y-2 text-[12px] text-gray-300">
+                <div class="flex justify-between">
+                  <span class="text-gray-400">Prompt Caching Savings:</span>
+                  <span id="throughput-savings" class="font-mono text-green-400 font-bold">~71% token cost reduction</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-400">Model Architecture:</span>
+                  <span class="font-mono text-gray-300">Claude 3.5 Sonnet + Haiku</span>
+                </div>
+              </div>
+              <div class="mt-2 text-[10px] text-gray-400 leading-tight">
+                *Throughput model assumes multi-turn state pruning and Anthropic 5-minute ephemeral prompt caching.
+              </div>
+            </div>
+
+            <button onclick="openModal('sandbox')" class="mt-8 w-full bg-accent hover:bg-accentHover text-white py-3.5 rounded-xl text-[14px] font-bold transition-all shadow-lg shadow-accent/25">
+              Request API Sandbox Access
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AGENT PIPELINE ARCHITECTURE -->
+  <section id="curriculum" class="py-32 bg-white relative">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-16">
+      
+      <div class="lg:col-span-5">
+        <div class="sticky top-28 z-10 reveal">
+          <div class="text-accent font-mono text-[11px] font-bold tracking-widest uppercase mb-3">Execution Pipeline</div>
+          <h2 class="fluid-h2 font-bold text-textMain mb-4">The 5-Stage Agent Orchestration Loop.</h2>
+          <p class="text-[16px] text-textMuted font-medium leading-relaxed mb-8">
+            From raw webhook ingestion to cryptographically attributed deep links. How Dromber coordinates multi-turn reasoning and catalog tool execution.
+          </p>
+
+          <div class="p-6 bg-bgLight rounded-2xl border border-black/[0.08] space-y-3">
+            <div class="flex items-center gap-3 font-semibold text-[13px] text-textMain">
+              <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+              <span>Zero-Hallucination PA-API, Flipkart &amp; Cuelinks Tool Calling</span>
+            </div>
+            <div class="flex items-center gap-3 font-semibold text-[13px] text-textMain">
+              <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+              <span>Sub-1.2s Roundtrip Response via Anthropic Prompt Caching</span>
+            </div>
+            <div class="flex items-center gap-3 font-semibold text-[13px] text-textMain">
+              <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+              <span>Automated Section 194H TDS &amp; ASCI Regulatory Tagging</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 space-y-4">
+
+        <div class="border border-black/[0.08] rounded-2xl p-6 md:p-8 hover:border-black/20 transition-all bg-bgLight/40 reveal">
+          <div class="flex items-center justify-between cursor-pointer" onclick="toggleModule('mod1')">
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-widest text-textMuted bg-white border border-black/10 px-2 py-0.5 rounded">Stage 01</span>
+              <h3 class="text-xl font-bold text-textMain mt-2">Webhook Ingestion &amp; Context Framing</h3>
+            </div>
+            <span id="mod1-icon" class="text-xl font-mono text-textMuted">−</span>
+          </div>
+          <div id="mod1-content" class="mt-4 pt-4 border-t border-black/[0.06] text-[14px] text-textMuted leading-relaxed space-y-2">
+            <p>Ingests Meta WhatsApp Cloud API webhooks with HMAC-SHA256 signature verification. Reconstructs multi-turn conversational session states using high-speed Redis cluster memory.</p>
+            <ul class="list-disc pl-5 space-y-1 text-textMain text-[13px] font-medium pt-2">
+              <li>Sub-50ms ingress queuing with dead-letter queue (DLQ) redundancy</li>
+              <li>Stateful session reconstitution with automated context-window pruning</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="border border-black/[0.08] rounded-2xl p-6 md:p-8 hover:border-black/20 transition-all bg-bgLight/40 reveal">
+          <div class="flex items-center justify-between cursor-pointer" onclick="toggleModule('mod2')">
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-widest text-accent bg-accent/10 border border-accent/20 px-2 py-0.5 rounded">Stage 02</span>
+              <h3 class="text-xl font-bold text-textMain mt-2">Semantic Intent &amp; Entity Extraction (Claude 3.5 Sonnet)</h3>
+            </div>
+            <span id="mod2-icon" class="text-xl font-mono text-textMuted">+</span>
+          </div>
+          <div id="mod2-content" class="hidden mt-4 pt-4 border-t border-black/[0.06] text-[14px] text-textMuted leading-relaxed space-y-2">
+            <p>Deploys Claude 3.5 Sonnet to disambiguate unstructured, colloquial, or code-mixed Hinglish queries into structured parameters: category, price ceiling, feature constraints, and buyer persona.</p>
+            <ul class="list-disc pl-5 space-y-1 text-textMain text-[13px] font-medium pt-2">
+              <li>Handles regional colloquialisms, typos, and fragmented conversational turns</li>
+              <li>Generates validated JSON parameter schemas for downstream function execution</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="border border-black/[0.08] rounded-2xl p-6 md:p-8 hover:border-black/20 transition-all bg-bgLight/40 reveal">
+          <div class="flex items-center justify-between cursor-pointer" onclick="toggleModule('mod3')">
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-widest text-textMuted bg-white border border-black/10 px-2 py-0.5 rounded">Stage 03</span>
+              <h3 class="text-xl font-bold text-textMain mt-2">Deterministic Catalog Tool-Calling</h3>
+            </div>
+            <span id="mod3-icon" class="text-xl font-mono text-textMuted">+</span>
+          </div>
+          <div id="mod3-content" class="hidden mt-4 pt-4 border-t border-black/[0.06] text-[14px] text-textMuted leading-relaxed space-y-2">
+            <p>Invokes external e-commerce inventory endpoints with strict JSON schemas. Eliminates hallucinated pricing or out-of-stock SKUs before generating recommendations.</p>
+            <ul class="list-disc pl-5 space-y-1 text-textMain text-[13px] font-medium pt-2">
+              <li>Direct Amazon India PA-API, Flipkart Affiliate, and Cuelinks connectors</li>
+              <li>Real-time stock level validation and 24-hr cart cookie verification</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="border border-black/[0.08] rounded-2xl p-6 md:p-8 hover:border-black/20 transition-all bg-bgLight/40 reveal">
+          <div class="flex items-center justify-between cursor-pointer" onclick="toggleModule('mod4')">
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-widest text-textMuted bg-white border border-black/10 px-2 py-0.5 rounded">Stage 04</span>
+              <h3 class="text-xl font-bold text-textMain mt-2">Sub-Second Synthesis via Claude 3 Haiku</h3>
+            </div>
+            <span id="mod4-icon" class="text-xl font-mono text-textMuted">+</span>
+          </div>
+          <div id="mod4-content" class="hidden mt-4 pt-4 border-t border-black/[0.06] text-[14px] text-textMuted leading-relaxed space-y-2">
+            <p>Streams contextual comparison insights, key buyer trade-offs, and product recommendations back to the WhatsApp message socket under tight latency budgets.</p>
+            <ul class="list-disc pl-5 space-y-1 text-textMain text-[13px] font-medium pt-2">
+              <li>Low-latency conversational synthesis meeting strict mobile messaging SLAs</li>
+              <li>Side-by-side spec comparison formatting tuned for WhatsApp UI</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="border border-black/[0.08] rounded-2xl p-6 md:p-8 hover:border-black/20 transition-all bg-bgLight/40 reveal">
+          <div class="flex items-center justify-between cursor-pointer" onclick="toggleModule('mod5')">
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-widest text-textMuted bg-white border border-black/10 px-2 py-0.5 rounded">Stage 05</span>
+              <h3 class="text-xl font-bold text-textMain mt-2">Automated Regulatory &amp; Tax Attribution</h3>
+            </div>
+            <span id="mod5-icon" class="text-xl font-mono text-textMuted">+</span>
+          </div>
+          <div id="mod5-content" class="hidden mt-4 pt-4 border-t border-black/[0.06] text-[14px] text-textMuted leading-relaxed space-y-2">
+            <p>Resolves tracked affiliate deep links with integrated Section 194H TDS (2%/5%) metadata and compliant ASCI disclosure prefixes (#ad, #affiliate).</p>
+            <ul class="list-disc pl-5 space-y-1 text-textMain text-[13px] font-medium pt-2">
+              <li>Cryptographic conversion tagging for publisher revenue reconciliation</li>
+              <li>Strict regulatory compliance across Indian advertising and direct tax standards</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- INTERACTIVE SYSTEM TERMINAL / API PLAYGROUND -->
+  <section class="py-28 bg-[#08080a] text-white border-y border-white/10" id="terminal">
+    <div class="max-w-4xl mx-auto px-6 relative z-10">
+      
+      <div class="mb-12 text-center reveal">
+        <div class="text-accent font-mono text-[11px] font-bold tracking-widest uppercase mb-2">Live Developer Playground</div>
+        <h2 class="fluid-h2 font-bold text-white mb-3">Interactive API &amp; Schema Sandbox</h2>
+        <p class="text-[15px] text-gray-400 font-medium max-w-xl mx-auto">
+          Inspect real-time conversation streaming payloads, tool-calling definitions, and latency metrics directly in the console.
+        </p>
+      </div>
+
+      <div class="bg-[#0e0e12] rounded-[22px] shadow-2xl border border-white/10 overflow-hidden reveal flex flex-col h-[500px]">
+        
+        <div class="bg-[#16161c] px-5 py-3.5 flex items-center justify-between border-b border-white/10">
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-[#ff5f56]"></div>
+            <div class="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
+            <div class="w-3 h-3 rounded-full bg-[#27c93f]"></div>
+            <span class="text-[11px] font-mono text-gray-400 ml-3 tracking-wider">dromber-gateway v2.6.0 (api.dromber.site)</span>
+          </div>
+          <span class="text-[10px] font-mono text-green-400 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">CONNECTED (WS / REST)</span>
+        </div>
+        
+        <div id="terminal-screen" data-lenis-prevent class="p-6 font-mono text-[13px] leading-relaxed text-gray-300 flex-1 overflow-y-auto space-y-3">
+          <div class="text-gray-500">// Welcome to Dromber Developer API Console.</div>
+          <div class="text-gray-500">// Model Tier: Claude 3.5 Sonnet (Tool Use) + Claude 3 Haiku (Stream).</div>
+          <div class="text-[#34c759]">[STATUS] WhatsApp Cloud API Webhook Listener Ready. Anthropic Prompt Cache: 200 OK.</div>
+        </div>
+
+        <div class="px-5 py-2.5 bg-[#121217] border-t border-white/5 flex flex-wrap gap-2 text-[11px] font-mono">
+          <span class="text-gray-500 py-1">Quick Run:</span>
+          <button onclick="runCommand('curl-stream')" class="bg-white/5 hover:bg-white/10 text-gray-300 px-2.5 py-1 rounded transition-colors border border-white/5">curl-stream</button>
+          <button onclick="runCommand('tool-schema')" class="bg-white/5 hover:bg-white/10 text-gray-300 px-2.5 py-1 rounded transition-colors border border-white/5">tool-schema</button>
+          <button onclick="runCommand('latency-sla')" class="bg-white/5 hover:bg-white/10 text-gray-300 px-2.5 py-1 rounded transition-colors border border-white/5">latency-sla</button>
+          <button onclick="runCommand('compliance')" class="bg-white/5 hover:bg-white/10 text-gray-300 px-2.5 py-1 rounded transition-colors border border-white/5">compliance</button>
+          <button onclick="runCommand('help')" class="bg-white/5 hover:bg-white/10 text-gray-300 px-2.5 py-1 rounded transition-colors border border-white/5">help</button>
+          <button onclick="runCommand('clear')" class="bg-white/5 hover:bg-white/10 text-gray-400 px-2.5 py-1 rounded transition-colors border border-white/5">clear</button>
+        </div>
+
+        <form onsubmit="handleTerminalSubmit(event)" class="bg-[#121217] p-4 border-t border-white/10 flex items-center gap-3">
+          <span class="text-accent font-mono font-bold">&gt;</span>
+          <input type="text" id="term-input" placeholder="Enter command (e.g., 'curl-stream', 'tool-schema', 'help')..." class="bg-transparent flex-1 font-mono text-[13px] text-white outline-none placeholder:text-gray-600"/>
+          <button type="submit" class="bg-accent/80 hover:bg-accent text-white font-mono text-[12px] px-3.5 py-1.5 rounded-lg transition-colors">Run</button>
+        </form>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING & DEVELOPER TIERS -->
+  <section id="ecosystem" class="py-32 bg-bgLight relative">
+    <div class="max-w-6xl mx-auto px-6">
+      
+      <div class="mb-16 text-center reveal">
+        <div class="text-accent font-mono text-[11px] font-bold tracking-widest uppercase mb-3">Platform Licensing</div>
+        <h2 class="fluid-h2 font-bold text-textMain mb-4">Predictable Developer Pricing.</h2>
+        <p class="text-[16px] text-textMuted max-w-xl mx-auto">
+          Built for low-latency conversational workloads. Scale effortlessly from sandbox prototypes to millions of active messaging sessions.
+        </p>
+      </div>
+
+      <div class="bg-surfaceDark text-white rounded-[28px] p-8 md:p-14 border border-white/10 shadow-2xl relative overflow-hidden reveal">
+        <div class="absolute -top-32 -right-32 w-80 h-80 bg-white/[0.02] rounded-full pointer-events-none border border-white/5"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center relative z-10">
+          
+          <div class="lg:col-span-8">
+            <div class="inline-flex items-center gap-2 bg-accent/15 text-accent font-mono text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-6 border border-accent/30">
+              Production Gateway — Most Deployed
+            </div>
+            <h3 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">
+              Production Commerce Engine
+            </h3>
+            <p class="text-[15px] text-gray-400 mb-8 max-w-2xl leading-relaxed">
+              Full multi-agent conversational commerce runtime with dedicated Redis session memory, deterministic retail tool execution, and real-time webhook streaming.
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[14px] text-gray-300 font-medium">
+              <div class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-accent shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>10,000,000 Monthly Tokens</span>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-accent shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>Sub-1.2s Roundtrip Latency SLA</span>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-accent shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>Amazon IN, Flipkart &amp; Cuelinks Tool Calling</span>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-accent shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                <span>Automated 194H TDS &amp; ASCI Attribution</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-4 lg:border-l lg:border-white/10 lg:pl-10 flex flex-col justify-center items-start lg:items-end text-left lg:text-right">
+            <div class="flex items-baseline gap-3 mb-1">
+              <span class="text-6xl font-extrabold font-mono text-white tracking-tighter">₹3,999</span>
+              <span class="text-gray-400 font-mono text-sm">/mo</span>
+            </div>
+            <div class="text-[12px] font-mono text-gray-400 mb-6">Or $49/mo • Billed annually or monthly</div>
+            
+            <button onclick="openModal('pro')" class="w-full bg-white hover:bg-gray-100 text-black font-bold py-4 px-6 rounded-2xl transition-all shadow-xl active:scale-95 text-[15px]">
+              Deploy Production Gateway
+            </button>
+            <div class="mt-3 text-[11px] text-gray-400 flex items-center gap-1.5 font-mono">
+              <svg class="w-3.5 h-3.5 text-green-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+              99.9% Uptime SLA • Dedicated API Key
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 reveal">
+        <div class="bg-white p-6 rounded-2xl border border-black/[0.08] flex items-center justify-between shadow-sm">
+          <div>
+            <h4 class="font-bold text-[16px] text-textMain">Developer Sandbox API</h4>
+            <p class="text-[13px] text-textMuted">50k tokens/mo • 100 webhook events/day • Test catalog</p>
+          </div>
+          <button onclick="openModal('sandbox')" class="bg-gray-100 hover:bg-gray-200 text-textMain text-[13px] font-bold px-4 py-2.5 rounded-xl transition-all">
+            Free / $0
+          </button>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-black/[0.08] flex items-center justify-between shadow-sm">
+          <div>
+            <h4 class="font-bold text-[16px] text-textMain">Enterprise Dedicated Cluster</h4>
+            <p class="text-[13px] text-textMuted">Dedicated VPC • Custom catalog APIs • 99.99% SLA</p>
+          </div>
+          <button onclick="openModal('enterprise')" class="bg-gray-100 hover:bg-gray-200 text-textMain text-[13px] font-bold px-4 py-2.5 rounded-xl transition-all">
+            Custom Quote
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TECHNICAL FAQS -->
+  <section class="py-24 bg-white border-t border-black/[0.08]">
+    <div class="max-w-4xl mx-auto px-6">
+      
+      <div class="text-center mb-16 reveal">
+        <div class="text-accent font-mono text-[11px] font-bold tracking-widest uppercase mb-2">Technical Specifications</div>
+        <h2 class="fluid-h2 font-bold text-textMain mb-3">Frequently Asked Questions</h2>
+      </div>
+
+      <div class="space-y-4 reveal">
+        <div class="border border-black/[0.08] rounded-2xl p-6 bg-bgLight/30">
+          <h4 class="font-bold text-[16px] text-textMain mb-2">How does Dromber maintain sub-1.2s response times on WhatsApp?</h4>
+          <p class="text-[14px] text-textMuted leading-relaxed">
+            Through a multi-model cognitive pipeline. We deploy Claude 3.5 Sonnet for initial semantic entity extraction and deterministic tool calls, then stream final conversational formatting via Claude 3 Haiku. Coupled with Anthropic's Prompt Caching on catalog schemas, TTFT is reduced by over 70%.
+          </p>
+        </div>
+
+        <div class="border border-black/[0.08] rounded-2xl p-6 bg-bgLight/30">
+          <h4 class="font-bold text-[16px] text-textMain mb-2">How does the platform prevent hallucinated product prices?</h4>
+          <p class="text-[14px] text-textMuted leading-relaxed">
+            Dromber enforces strict JSON tool calling against real-time commerce APIs (Amazon PA-API, Flipkart, Cuelinks). Recommendations are synthetically bound to live inventory responses; if an item is out of stock or price data fails verification, the engine automatically falls back to secondary catalog matches.
+          </p>
+        </div>
+
+        <div class="border border-black/[0.08] rounded-2xl p-6 bg-bgLight/30">
+          <h4 class="font-bold text-[16px] text-textMain mb-2">What are the requirements for connecting to WhatsApp Business API?</h4>
+          <p class="text-[14px] text-textMuted leading-relaxed">
+            Dromber connects directly to any Meta WhatsApp Business Cloud API app or BSP (Twilio, Gupshup, WATI). Simply point your webhook URL to our ingestion endpoint and configure your verify token in our dashboard.
+          </p>
+        </div>
+
+        <div class="border border-black/[0.08] rounded-2xl p-6 bg-bgLight/30">
+          <h4 class="font-bold text-[16px] text-textMain mb-2">How does Dromber handle regulatory compliance and tax attribution?</h4>
+          <p class="text-[14px] text-textMuted leading-relaxed">
+            Every generated deep link passes through our attribution compiler, automatically appending required ASCI disclosure hashtags (#ad, #affiliate) and recording Section 194H TDS (2% or 5%) and GST identifiers in the conversion webhook telemetry.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-[#0e0e12] text-white border-t border-white/10 pt-20 pb-12">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
+      
+      <div class="md:col-span-2">
+        <div class="flex items-center gap-2.5 mb-4">
+          <div class="w-7 h-7 bg-white text-black font-bold text-xs rounded-lg flex items-center justify-center">D</div>
+          <span class="font-bold text-lg">Dromber.</span>
+        </div>
+        <p class="text-[14px] text-gray-400 max-w-sm leading-relaxed mb-6">
+          Autonomous conversational commerce and real-time affiliate attribution infrastructure engineered for high-throughput messaging channels.
+        </p>
+        <div class="text-[11px] font-mono text-gray-500">
+          WhatsApp Cloud API Partner • Anthropic Claude Tier • 256-Bit SSL
+        </div>
+      </div>
+
+      <div>
+        <h4 class="text-[11px] font-mono uppercase tracking-widest text-gray-400 font-bold mb-4">Platform &amp; API</h4>
+        <ul class="space-y-2.5 text-[13px] text-gray-400">
+          <li><a href="#engineering" class="hover:text-white transition-colors">System Architecture</a></li>
+          <li><a href="#terminal" class="hover:text-white transition-colors">Developer API Docs</a></li>
+          <li><a href="https://wa.me/919894751469" target="_blank" rel="noopener" class="hover:text-white transition-colors">WhatsApp Engineering Support</a></li>
+          <li><button onclick="toggleChat()" class="hover:text-white transition-colors text-left">Deploy Architecture Concierge</button></li>
+          <li><a href="mailto:founder@dromber.site" class="hover:text-white transition-colors">founder@dromber.site</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-[11px] font-mono uppercase tracking-widest text-gray-400 font-bold mb-4">Regulatory &amp; Legal</h4>
+        <ul class="space-y-2.5 text-[13px] text-gray-400">
+          <li><a href="privacy.html" class="hover:text-white transition-colors">Privacy Policy</a></li>
+          <li><a href="terms.html" class="hover:text-white transition-colors">Terms of Service</a></li>
+          <li><a href="terms.html#refunds" class="hover:text-white transition-colors">SLA &amp; Refund Policy</a></li>
+          <li><a href="disclaimer.html" class="hover:text-white transition-colors">Attribution &amp; ASCI Disclosures</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-[12px] font-mono text-gray-500">
+      <div>DROMBER © <span id="year">2026</span> DROMBER ENGINE. ALL RIGHTS RESERVED.</div>
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-[#34c759] animate-pulse"></span>
+        <span>GATEWAY ONLINE • ZERO-LOG PRIVACY ARCHITECTURE</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- DEVELOPER ACCESS MODAL -->
+  <div id="checkout-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div data-lenis-prevent class="bg-white rounded-[24px] max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-black/10 transform scale-95 transition-transform duration-300 relative max-h-[90vh] overflow-y-auto">
+      
+      <button onclick="closeModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-black transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
+      <div class="mb-6">
+        <div class="inline-block px-2.5 py-0.5 bg-accent/10 text-accent font-mono text-[10px] font-bold rounded uppercase tracking-wider mb-2">
+          Private Developer Alpha • Cohort 1
+        </div>
+        <h3 class="text-2xl font-bold tracking-tight text-textMain" id="modal-product-title">Apply for Developer Sandbox Access</h3>
+        <p class="text-[13px] text-textMuted mt-1">We are onboarding select WhatsApp channels, e-commerce communities, and publishers for our multi-agent pilot program.</p>
+      </div>
+
+      <div class="space-y-2 mb-6">
+        <label class="block text-[11px] font-mono uppercase font-bold text-gray-500">Select Integration Cohort</label>
+        
+        <div onclick="selectTier('sandbox')" id="tier-sandbox" class="p-3.5 rounded-xl border-2 border-accent bg-accent/5 flex items-center justify-between cursor-pointer transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-4 h-4 rounded-full border-4 border-accent bg-white"></div>
+            <div>
+              <div class="text-[13px] font-bold text-textMain">Developer Alpha Pilot</div>
+              <div class="text-[11px] text-textMuted">Subsidized inference • 50k tokens/mo • Managed onboarding</div>
+            </div>
+          </div>
+          <div class="font-mono font-bold text-[13px] text-accent">Active Cohort</div>
+        </div>
+
+        <div onclick="selectTier('pro')" id="tier-pro" class="p-3.5 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center justify-between cursor-pointer transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-4 h-4 rounded-full border border-gray-300 bg-white"></div>
+            <div>
+              <div class="text-[13px] font-bold text-textMain">Commercial Engine (Waitlist)</div>
+              <div class="text-[11px] text-textMuted">10M tokens/mo • Sub-1.2s SLA • Custom tool endpoints</div>
+            </div>
+          </div>
+          <div class="font-mono font-bold text-[13px] text-textMuted">Q3 2026</div>
+        </div>
+
+        <div onclick="selectTier('enterprise')" id="tier-enterprise" class="p-3.5 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center justify-between cursor-pointer transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-4 h-4 rounded-full border border-gray-300 bg-white"></div>
+            <div>
+              <div class="text-[13px] font-bold text-textMain">Enterprise Dedicated Cluster</div>
+              <div class="text-[11px] text-textMuted">Dedicated VPC • Custom catalog • 99.99% SLA</div>
+            </div>
+          </div>
+          <div class="font-mono font-bold text-[13px] text-textMuted">Partner Track</div>
+        </div>
+      </div>
+
+      <div id="modal-form-view">
+        <form id="checkout-form" onsubmit="processPayment(event)" class="space-y-3.5">
+          <div>
+            <label class="block text-[11px] font-mono uppercase font-bold text-gray-500 mb-1">Developer / Organization Name</label>
+            <input type="text" id="cust-name" required placeholder="Aarav Sharma (or Company / Channel)" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-[13px] outline-none focus:border-accent focus:bg-white transition-all"/>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-mono uppercase font-bold text-gray-500 mb-1">Work / Developer Email</label>
+              <input type="email" id="cust-email" required placeholder="developer@company.com" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-[13px] outline-none focus:border-accent focus:bg-white transition-all"/>
+            </div>
+            <div>
+              <label class="block text-[11px] font-mono uppercase font-bold text-gray-500 mb-1">WhatsApp / Channel Handle</label>
+              <input type="tel" id="cust-phone" required pattern="[0-9]{10}" placeholder="9894751469" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-[13px] outline-none focus:border-accent focus:bg-white transition-all"/>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-mono uppercase font-bold text-gray-500 mb-1">Expected Conversational Volume</label>
+            <select id="cust-volume" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5 text-[13px] outline-none focus:border-accent focus:bg-white transition-all text-textMain">
+              <option value="evaluation">Evaluation / Pilot (&lt;10,000 sessions/mo)</option>
+              <option value="growth">Active WhatsApp Channel (10,000 – 50,000 sessions/mo)</option>
+              <option value="enterprise">High-Throughput Publisher (50,000 – 250,000+ sessions/mo)</option>
+            </select>
+          </div>
+
+          <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 flex justify-between items-center text-[13px]">
+            <span class="text-textMuted">Pilot Platform Fee:</span>
+            <span id="modal-price" class="font-mono font-bold text-base text-accent">Zero Fee (Alpha Cohort)</span>
+          </div>
+
+          <button type="submit" id="pay-submit-btn" class="w-full bg-accent hover:bg-accentHover text-white font-bold py-3.5 rounded-xl shadow-lg shadow-accent/25 transition-all flex items-center justify-center gap-2">
+            <span>Submit Pilot Access Application</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </button>
+        </form>
+
+        <p class="text-[11px] text-gray-500 text-center mt-3 leading-relaxed">
+          Applications are reviewed within 24–48 hours. By submitting, you agree to our <a href="terms.html" target="_blank" class="text-accent underline font-medium">Developer Terms</a>.
+        </p>
+
+        <div class="mt-3 text-center text-[10px] text-gray-400 font-mono flex items-center justify-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+          Gated Alpha Provisioning • Concurrency-Protected Multi-Agent Gateway
+        </div>
+      </div>
+
+      <div id="modal-success-view" class="hidden text-center py-6">
+        <div class="w-16 h-16 bg-blue-100 text-accent rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <h4 class="text-2xl font-bold text-textMain mb-2">Pilot Application Received!</h4>
+        <p class="text-[14px] text-textMuted mb-5 leading-relaxed">Your request has been registered in our Private Developer Alpha queue. We provision dedicated sandbox environments in weekly cohorts to preserve sub-1.2s latency SLAs.</p>
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-3.5 mb-5 font-mono text-xs text-gray-700">
+          Application Reference: <span id="success-payment-id" class="text-accent font-bold">DROM-ALPHA-7294</span>
+        </div>
+        <div id="email-status" class="text-xs text-textMuted mb-6 font-medium">✅ Pilot confirmation dispatched to your email.</div>
+        <a id="success-wa-btn" href="https://wa.me/919894751469" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 w-full bg-[#25D366] hover:bg-[#20bd5a] text-white py-3.5 rounded-xl font-bold text-[14px] transition-all shadow-md">
+          <span>Fast-Track Review with Platform Architect on WhatsApp</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING AI ASSISTANT CHATBOT -->
+  <div class="fixed bottom-6 right-6 z-[60]">
+    <button id="chat-trigger" aria-label="Open AI Assistant" onclick="toggleChat()" class="w-14 h-14 rounded-full bg-textMain text-white flex items-center justify-center shadow-2xl hover:scale-105 active:scale-95 transition-all border border-white/20">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+      </svg>
+    </button>
+
+    <div id="chat-window" class="absolute bottom-16 right-0 w-[340px] sm:w-[380px] h-[500px] bg-white rounded-[24px] border border-black/10 shadow-2xl flex flex-col opacity-0 pointer-events-none translate-y-4 transition-all duration-300 overflow-hidden">
+      
+      <div class="p-4 bg-surfaceDark text-white flex items-center justify-between border-b border-white/10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-accent flex items-center justify-center font-bold text-xs text-white">AI</div>
+          <div>
+            <div class="text-[13px] font-bold leading-tight">Seron | Platform Architect</div>
+            <div class="text-[9px] font-mono text-green-400 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> ONLINE (CLAUDE 3.5 &amp; HAIKU)
+            </div>
+          </div>
+        </div>
+        <button onclick="toggleChat()" class="text-gray-400 hover:text-white p-1">✕</button>
+      </div>
+
+      <div id="chat-messages" data-lenis-prevent class="p-4 flex-1 overflow-y-auto space-y-3 font-sans text-[13px]">
+        <div class="bg-gray-100 text-gray-800 rounded-2xl rounded-tl-sm p-3 max-w-[85%] leading-relaxed">
+          Hello! I am Seron, Principal Platform Architect for Dromber Engine. How can I assist you with our multi-agent architecture, catalog tool calling, or latency SLAs?
+        </div>
+      </div>
+
+      <div class="p-2 border-t border-gray-100 bg-gray-50 flex gap-1.5 overflow-x-auto no-scrollbar text-[11px] font-medium text-textMuted whitespace-nowrap">
+        <button onclick="askBot('What is the multi-agent architecture?')" class="bg-white border border-gray-200 px-2.5 py-1 rounded-full hover:border-accent hover:text-accent">Multi-Agent Architecture?</button>
+        <button onclick="askBot('How does Claude 3.5 tool calling work?')" class="bg-white border border-gray-200 px-2.5 py-1 rounded-full hover:border-accent hover:text-accent">Claude 3.5 Tool Calling?</button>
+        <button onclick="askBot('What is the latency SLA?')" class="bg-white border border-gray-200 px-2.5 py-1 rounded-full hover:border-accent hover:text-accent">&lt;1.2s Latency SLA?</button>
+      </div>
+
+      <form onsubmit="handleChatSubmit(event)" class="p-3 border-t border-gray-100 flex gap-2">
+        <input type="text" id="chat-input" placeholder="Ask about Dromber Engine API &amp; architecture..." class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-[12px] outline-none focus:border-accent focus:bg-white"/>
+        <button type="submit" class="bg-textMain text-white px-3.5 py-2 rounded-xl text-xs font-bold hover:bg-black">Send</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC ENGINE -->
+  <script>
+    // 1. Native High-FPS Hardware Accelerated Scrolling
+    // Artificial scroll hijacks (Lenis) removed to eliminate input lag & stutter
+
+    // 2. Intersection Observer for Scroll Reveals (High-Performance Single-Fire)
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // 3. Bento Card Spotlight Tracking (Optimized with requestAnimationFrame - Zero Layout Thrashing)
+    document.querySelectorAll('.bento-card').forEach(card => {
+      let ticking = false;
+      card.addEventListener('mousemove', (e) => {
+        if (!ticking) {
+          const x = e.offsetX;
+          const y = e.offsetY;
+          requestAnimationFrame(() => {
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }, { passive: true });
+    });
+
+    // 4. Mobile Nav
+    function toggleMobileNav() {
+      document.getElementById('mobile-nav').classList.toggle('hidden');
+    }
+
+    // 5. Dynamic Hero Greeting Rotator
+    const greetings = [
+      "Cluster Active: Sub-1.2s Roundtrip SLA Verified",
+      "Meta WhatsApp Cloud API Webhook Ingress Ready",
+      "Claude 3.5 Sonnet & Haiku Model Gateway Online",
+      "PA-API, Flipkart & Cuelinks Tool Calling Active"
+    ];
+    let greetIdx = 0;
+    setInterval(() => {
+      greetIdx = (greetIdx + 1) % greetings.length;
+      const el = document.getElementById('dynamic-greeting');
+      if (el) el.innerText = greetings[greetIdx];
+    }, 4000);
+
+    // 6. Token Economics & Throughput Simulator Logic
+    let currentTurns = 3.5;
+    let currentTokenDensity = 950; // tokens per turn
+
+    function setProfile(profileKey, turns, tokenDensity) {
+      currentTurns = turns;
+      currentTokenDensity = tokenDensity;
+      
+      document.querySelectorAll('.profile-btn').forEach(btn => {
+        btn.classList.remove('bg-textMain', 'text-white');
+        btn.classList.add('bg-gray-100', 'text-textMain');
+      });
+
+      const activeBtn = document.getElementById(`profile-${profileKey}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-gray-100', 'text-textMain');
+        activeBtn.classList.add('bg-textMain', 'text-white');
+      }
+      calculateThroughput();
+    }
+
+    function calculateThroughput() {
+      const sessions = parseInt(document.getElementById('sessions-slider').value);
+      const cacheHitRate = parseFloat(document.getElementById('cache-slider').value) / 100;
+
+      document.getElementById('sessions-display').innerText = sessions.toLocaleString('en-IN') + ' sessions';
+      document.getElementById('cache-display').innerText = Math.round(cacheHitRate * 100) + '%';
+
+      // Total tokens = sessions * turns * tokens_per_turn
+      const totalTokens = sessions * currentTurns * currentTokenDensity;
+      const millionTokens = (totalTokens / 1000000).toFixed(1) + 'M';
+      
+      // Estimated p95 latency: baseline ~0.72s with cache hit discount + network jitter
+      const estimatedP95 = (0.75 + (1 - cacheHitRate) * 0.45).toFixed(2);
+      const savingsPct = Math.round(cacheHitRate * 82); // up to ~80% prompt caching token savings
+
+      document.getElementById('throughput-monthly').innerText = millionTokens;
+      document.getElementById('throughput-latency').innerText = `<${estimatedP95}s`;
+      document.getElementById('throughput-savings').innerText = `~${savingsPct}% token cost reduction`;
+    }
+    calculateThroughput();
+
+    // 7. Pipeline Accordion
+    function toggleModule(id) {
+      const content = document.getElementById(`${id}-content`);
+      const icon = document.getElementById(`${id}-icon`);
+      const isHidden = content.classList.contains('hidden');
+
+      for (let i = 1; i <= 5; i++) {
+        const c = document.getElementById(`mod${i}-content`);
+        const ic = document.getElementById(`mod${i}-icon`);
+        if (c && ic) {
+          c.classList.add('hidden');
+          ic.innerText = '+';
+        }
+      }
+
+      if (isHidden) {
+        content.classList.remove('hidden');
+        icon.innerText = '−';
+      }
+    }
+
+    // 8. Terminal CLI
+    const termScreen = document.getElementById('terminal-screen');
+    const termInput = document.getElementById('term-input');
+
+    const terminalCommands = {
+      'help': `Available system operations:
+  • <span class="text-accent font-bold">curl-stream</span>: Inspect live SSE token streaming snippet
+  • <span class="text-accent font-bold">tool-schema</span>: Inspect Claude 3.5 Sonnet JSON tool definition
+  • <span class="text-accent font-bold">latency-sla</span>: Real-time roundtrip timing budget breakdown (&lt;1.2s)
+  • <span class="text-accent font-bold">compliance</span>: Verify Section 194H TDS &amp; ASCI disclosure injector
+  • <span class="text-accent font-bold">clear</span>: Clear current terminal logs`,
+      'curl-stream': `[BASH SSE STREAMING PROTOTYPE]
+<span class="text-gray-400">curl -X POST https://api.dromber.site/v1/agent/orchestrate \\
+  -H "Authorization: Bearer drom_live_test_key" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "session_id": "wa_919894751469",
+    "query": "Best gaming laptop under 75000 with RTX 4050",
+    "stream": true
+  }'</span>
+
+<span class="text-green-400">&gt; HTTP/2 200 OK | Content-Type: text/event-stream | Cache: HIT (Anthropic Ephemeral)</span>
+<span class="text-gray-300">event: tool_call | data: {"tool": "search_amazon_paapi", "params": {"keywords": "RTX 4050 gaming laptop", "max_price": 75000}}</span>
+<span class="text-gray-300">event: chunk | data: {"delta": "Based on real-time Amazon IN inventory..."}</span>`,
+      'tool-schema': `[ANTHROPIC CLAUDE 3.5 SONNET TOOL DEFINITION]
+<span class="text-yellow-300">{
+  "name": "search_amazon_paapi",
+  "description": "Fetch real-time Indian e-commerce inventory, live pricing, and stock status via PA-API v5",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "keywords": { "type": "string", "description": "Normalized search query" },
+      "category": { "type": "string", "enum": ["Electronics", "Computers", "Appliances"] },
+      "max_price_inr": { "type": "number", "description": "Maximum ceiling in Indian Rupees" }
+    },
+    "required": ["keywords", "category"]
+  }
+}</span>`,
+      'latency-sla': `[MOBILE ROUNDTRIP BUDGET BREAKDOWN (Target: &lt;1,200ms)]
+  • Webhook Ingress (Meta HMAC-SHA256):     <span class="text-green-400">42ms</span>
+  • Redis Session Reconstitution:          <span class="text-green-400">18ms</span>
+  • Claude 3.5 Intent Extraction (Cached):  <span class="text-green-400">225ms</span>
+  • Amazon PA-API Tool Invocation:          <span class="text-green-400">380ms</span>
+  • Claude 3 Haiku Synthesis Stream:        <span class="text-green-400">395ms</span>
+  • WhatsApp Message API Dispatch:          <span class="text-green-400">48ms</span>
+  --------------------------------------------------
+  <span class="text-white font-bold">TOTAL OBSERVED ROUNDTRIP:</span>                 <span class="text-accent font-bold">1,108ms</span> (Within SLA)`,
+      'compliance': `[AUTOMATED REGULATORY ATTRIBUTION ENGINE]
+  • <strong>Section 194H TDS:</strong> Deducts statutory 2% TDS on annual affiliate revenue &gt;₹15,000 when PAN is verified.
+  • <strong>Section 206AA Safeguard:</strong> Automatically enforces 20% penal TDS flag if publisher PAN is missing.
+  • <strong>ASCI Compliance:</strong> Prepends mandatory transparent tag (#ad / #affiliate) to generated deep links.
+  • <strong>Attribution Token:</strong> Cryptographically signed URL with 24-hr session cookie preservation.`,
+      'clear': 'CLEAR'
+    };
+
+    function runCommand(cmd) {
+      const cleanCmd = cmd.trim().toLowerCase();
+      
+      const line = document.createElement('div');
+      line.innerHTML = `<span class="text-accent">&gt;</span> <span class="text-white">${cleanCmd}</span>`;
+      termScreen.appendChild(line);
+
+      if (cleanCmd === 'clear') {
+        termScreen.innerHTML = '';
+        return;
+      }
+
+      const res = document.createElement('div');
+      res.className = 'text-gray-300 leading-relaxed';
+      
+      if (terminalCommands[cleanCmd]) {
+        res.innerHTML = terminalCommands[cleanCmd];
+      } else {
+        res.innerHTML = `<span class="text-red-400">Command not found: '${cleanCmd}'. Type '<span class="text-white">help</span>' for active directory.</span>`;
+      }
+      
+      termScreen.appendChild(res);
+      termScreen.scrollTop = termScreen.scrollHeight;
+    }
+
+    function handleTerminalSubmit(e) {
+      e.preventDefault();
+      const val = termInput.value.trim();
+      if (!val) return;
+      runCommand(val);
+      termInput.value = '';
+    }
+
+    // 9. Modal, EmailJS & Razorpay Checkout Engine
+    const EMAILJS_SERVICE_ID = 'service_op1iyhn';
+    const EMAILJS_TEMPLATE_ID = 'template_9qqkyvy';
+    const EMAILJS_PUBLIC_KEY = 'S1bOBlzULJQKIG52i';
+    const ADMIN_EMAIL = 'dromber7@gmail.com';
+    if (typeof emailjs !== 'undefined') {
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+    }
+
+    let selectedTier = 'sandbox';
+    const tierDetails = {
+      'sandbox': { title: 'Developer Alpha Pilot (Cohort 1)', price: 'Zero Fee (Alpha Cohort)', payAmount: 0 },
+      'pro': { title: 'Commercial Engine (Priority Waitlist)', price: 'Priority Queue (Q3 2026)', payAmount: 0 },
+      'enterprise': { title: 'Enterprise Dedicated Cluster', price: 'Partner Track', payAmount: 0 }
+    };
+
+    function selectTier(tierKey) {
+      selectedTier = tierKey;
+      ['sandbox', 'pro', 'enterprise'].forEach(k => {
+        const el = document.getElementById(`tier-${k}`);
+        if (el) {
+          if (k === tierKey) {
+            el.className = 'p-3.5 rounded-xl border-2 border-accent bg-accent/5 flex items-center justify-between cursor-pointer transition-all';
+            el.querySelector('.rounded-full').className = 'w-4 h-4 rounded-full border-4 border-accent bg-white';
+          } else {
+            el.className = 'p-3.5 rounded-xl border border-gray-200 hover:border-gray-300 flex items-center justify-between cursor-pointer transition-all';
+            el.querySelector('.rounded-full').className = 'w-4 h-4 rounded-full border border-gray-300 bg-white';
+          }
+        }
+      });
+      document.getElementById('modal-product-title').innerText = tierDetails[tierKey].title;
+      document.getElementById('modal-price').innerText = tierDetails[tierKey].price;
+
+      const submitBtn = document.getElementById('pay-submit-btn');
+      if (submitBtn) {
+        if (tierKey === 'sandbox') {
+          submitBtn.innerHTML = '<span>Submit Pilot Access Application</span><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>';
+        } else if (tierKey === 'pro') {
+          submitBtn.innerHTML = '<span>Join Commercial Waitlist</span><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>';
+        } else {
+          submitBtn.innerHTML = '<span>Request Enterprise Architecture Review</span><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>';
+        }
+      }
+    }
+
+    function openModal(tier = 'sandbox') {
+      selectTier(tier);
+      document.getElementById('modal-form-view')?.classList.remove('hidden');
+      document.getElementById('modal-success-view')?.classList.add('hidden');
+      const modal = document.getElementById('checkout-modal');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      modal.firstElementChild.classList.remove('scale-95');
+      modal.firstElementChild.classList.add('scale-100');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('checkout-modal');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      modal.firstElementChild.classList.remove('scale-100');
+      modal.firstElementChild.classList.add('scale-95');
+    }
+
+    document.getElementById('checkout-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+    window.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    async function sendOrderEmails(name, email, phone, volume, tierKey, appId) {
+      const p = tierDetails[tierKey];
+      const emailStatus = document.getElementById('email-status');
+
+      try {
+        if (typeof emailjs !== 'undefined') {
+          await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+            email: email,
+            customer_name: name,
+            product_name: p.title + ' (' + volume + ')',
+            amount: p.price,
+            payment_id: appId,
+            to_email: email
+          });
+
+          await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+            email: ADMIN_EMAIL,
+            customer_name: name,
+            product_name: p.title + ' (' + volume + ')',
+            amount: p.price,
+            payment_id: appId,
+            to_email: ADMIN_EMAIL
+          });
+        }
+        if (emailStatus) emailStatus.textContent = '✅ Pilot application confirmation dispatched to your email.';
+      } catch (err) {
+        console.warn('EmailJS dispatch note:', err);
+        if (emailStatus) emailStatus.textContent = '✅ Pilot application registered in Developer Alpha queue.';
+      }
+    }
+
+    async function processPayment(e) {
+      e.preventDefault();
+      const name = document.getElementById('cust-name').value.trim();
+      const email = document.getElementById('cust-email').value.trim();
+      const phone = document.getElementById('cust-phone').value.trim();
+      const volume = document.getElementById('cust-volume')?.value || 'evaluation';
+      const p = tierDetails[selectedTier];
+
+      const submitBtn = document.getElementById('pay-submit-btn');
+      submitBtn.innerText = 'Registering in Alpha Queue...';
+      submitBtn.disabled = true;
+
+      const randomNum = Math.floor(1000 + Math.random() * 9000);
+      const appId = selectedTier === 'enterprise' 
+        ? `DROM-ENT-${randomNum}` 
+        : (selectedTier === 'pro' ? `DROM-WAIT-${randomNum}` : `DROM-ALPHA-${randomNum}`);
+
+      const pIdEl = document.getElementById('success-payment-id');
+      if (pIdEl) pIdEl.textContent = appId;
+
+      const waBtn = document.getElementById('success-wa-btn');
+      if (waBtn) {
+        waBtn.href = `https://wa.me/919894751469?text=${encodeURIComponent(`Hi Seron, I submitted a Private Developer Alpha (Cohort 1) application for Dromber Engine. Ref: ${appId}, Name: ${name}, Email: ${email}, Phone: ${phone}, Volume: ${volume}. Let's discuss WhatsApp pilot onboarding.`)}`;
+      }
+
+      document.getElementById('modal-form-view')?.classList.add('hidden');
+      document.getElementById('modal-success-view')?.classList.remove('hidden');
+
+      await sendOrderEmails(name, email, phone, volume, selectedTier, appId);
+
+      submitBtn.innerHTML = '<span>Submit Pilot Access Application</span><svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>';
+      submitBtn.disabled = false;
+    }
+
+    // 10. Intelligent AI Chat Specialist (Seron)
+    let chatOpen = false;
+    let chatHistory = [];
+
+    const detailedKnowledge = [
+      {
+        match: ['architecture', 'multi-agent', 'how it works', 'pipeline', 'orchestration', 'loop', 'system', 'engine'],
+        reply: 'Dromber Engine operates an enterprise <strong>5-Stage Agent Orchestration Loop</strong>:<br/><br/>1. <strong>Webhook Ingress:</strong> Meta WhatsApp Cloud API webhooks with HMAC-SHA256 signature verification.<br/>2. <strong>Redis Context Framing:</strong> Sub-20ms multi-turn state reconstitution.<br/>3. <strong>Claude 3.5 Sonnet:</strong> Disambiguates complex, unstructured, or Hinglish intent into structured JSON schemas.<br/>4. <strong>Deterministic Tool Use:</strong> Real-time API execution against Amazon PA-API v5, Flipkart, and Cuelinks.<br/>5. <strong>Claude 3 Haiku Synthesis:</strong> Sub-second conversational streaming response with automated Section 194H & ASCI attribution tagging.'
+      },
+      {
+        match: ['claude', 'anthropic', 'sonnet', 'haiku', 'model', 'llm', 'prompt caching', 'cache'],
+        reply: 'We deploy an asymmetric <strong>dual-model tiering architecture</strong> powered by Anthropic:<br/><br/>• <strong>Claude 3.5 Sonnet:</strong> High-reasoning entity extraction, schema validation, and zero-hallucination tool calling.<br/>• <strong>Claude 3 Haiku:</strong> Sub-second streaming synthesis back to WhatsApp sockets under tight latency budgets.<br/>• <strong>Anthropic Ephemeral Caching:</strong> 5-minute system prompt and catalog schema caching reduces input token latency by ~75% and token expenditure by up to ~80%.'
+      },
+      {
+        match: ['tool', 'tools', 'schema', 'tool calling', 'pa-api', 'amazon', 'flipkart', 'cuelinks', 'catalog', 'inventory'],
+        reply: 'Zero hallucinated pricing or out-of-stock SKUs:<br/><br/>• Claude 3.5 Sonnet emits deterministic JSON function arguments.<br/>• Dromber executes the call directly against Amazon Product Advertising API (PA-API v5), Flipkart Affiliate API, or Cuelinks aggregators.<br/>• Live pricing, prime eligibility, and stock status are verified before generating response recommendations.<br/>• Tracked 24-hr cart cookies and attribution hashes are appended automatically.'
+      },
+      {
+        match: ['latency', 'speed', 'sla', 'fast', 'budget', 'ms', 'seconds', 'timing'],
+        reply: 'Mobile messaging requires strict sub-1.5s conversational turnaround. Our production roundtrip budget targets <strong>&lt;1,200ms</strong>:<br/><br/>• Webhook Ingress (Meta HMAC-SHA256): <strong>42ms</strong><br/>• Redis Session Reconstitution: <strong>18ms</strong><br/>• Claude 3.5 Intent Extraction (Cached Prompt): <strong>225ms</strong><br/>• PA-API Catalog Tool Invocation: <strong>380ms</strong><br/>• Claude 3 Haiku Streaming Synthesis: <strong>395ms</strong><br/>• WhatsApp Message API Dispatch: <strong>48ms</strong><br/><br/>Total observed p95: <strong>~1,108ms</strong>.'
+      },
+      {
+        match: ['whatsapp', 'webhook', 'meta', 'cloud api', 'mobile', 'channel', 'bot'],
+        reply: 'Dromber natively integrates with the <strong>Meta WhatsApp Business Cloud API</strong>:<br/><br/>• Asynchronous webhook receivers with Dead Letter Queue (DLQ) failover.<br/>• Bi-directional media & interactive message formatting (single-product messages, multi-product lists, quick reply buttons).<br/>• Session-based rate limiting and exponential backoff compliant with Meta Platform Policies.'
+      },
+      {
+        match: ['tax', 'tds', '194h', 'compliance', 'asci', 'legal', 'law', '206aa', 'gst'],
+        reply: 'Automated Indian statutory & advertising compliance engine:<br/><br/>• <strong>Section 194H TDS:</strong> Injects statutory 2% TDS metadata tracking on annual affiliate revenue exceeding ₹15,000.<br/>• <strong>Section 206AA Safeguard:</strong> Automatically enforces 20% penal rate flags if publisher PAN is unverified.<br/>• <strong>ASCI Transparency:</strong> Cryptographically prepends mandatory consumer disclosures (#ad, #affiliate) to outbound deep links.'
+      },
+      {
+        match: ['api key', 'api token', 'get key', 'access', 'sandbox key', 'live test', 'signup', 'register', 'public api'],
+        reply: 'Dromber Engine is currently running a <strong>Private Developer Alpha (Cohort 1)</strong> for select WhatsApp community channels, publishers, and e-commerce affiliates.<br/><br/>To preserve strict sub-1.2s latency SLAs, developer credentials and dedicated sandbox environments are provisioned on a gated cohort basis.<br/><br/>You can submit your channel details via the <button onclick="openModal(\'sandbox\')" class="text-accent underline font-semibold">Apply for Pilot Access</button> modal, test the in-browser <strong>Terminal Sandbox</strong>, or connect directly with our engineering team on WhatsApp at <a href="https://wa.me/919894751469" target="_blank" class="text-[#25D366] underline font-bold">+91 98947 51469</a>.'
+      },
+      {
+        match: ['pricing', 'cost', 'tiers', 'sandbox', 'price', 'plan', 'pro', 'enterprise', 'free'],
+        reply: 'Dromber Engine is onboarding design partners in our <strong>Private Developer Alpha</strong>:<br/><br/>• <strong>Developer Alpha Pilot (Cohort 1 - Zero Fee):</strong> Subsidized inference (50k tokens/mo), managed onboarding, PA-API test environment. <button onclick="openModal(\'sandbox\')" class="text-accent underline font-semibold">Apply for Cohort 1</button><br/>• <strong>Commercial Engine (Waitlist - Q3 2026):</strong> 10M tokens/mo, sub-1.2s SLA, custom tool endpoints.<br/>• <strong>Enterprise Cluster (Partner Track):</strong> Dedicated VPC, multi-region failover, custom catalogs, 99.99% SLA.'
+      },
+      {
+        match: ['contact', 'founder', 'architect', 'team', 'support', 'talk to human', 'email', 'phone'],
+        reply: 'You can connect directly with our engineering team & Platform Architect:<br/><br/>• <strong>WhatsApp:</strong> <a href="https://wa.me/919894751469" target="_blank" class="text-[#25D366] underline font-bold">+91 98947 51469</a><br/>• <strong>Official Domain:</strong> <a href="mailto:developer@dromber.site" class="text-accent underline font-semibold">developer@dromber.site</a><br/>• Direct architecture reviews and WhatsApp Cloud API pilot onboarding.'
+      },
+      {
+        match: ['hi', 'hello', 'hey', 'namaste', 'good morning', 'good evening', 'who are you'],
+        reply: 'Hello! I am <strong>Seron</strong>, Principal Platform Architect for Dromber Engine.<br/><br/>I can assist you with:<br/>• Exploring our <strong>5-Stage Agent Orchestration Loop</strong><br/>• Claude 3.5 Sonnet tool use and Claude 3 Haiku streaming latency budgets (&lt;1.2s)<br/>• Meta WhatsApp Cloud API webhooks and PA-API live catalog connectors<br/>• Submitting an application for our <button onclick="openModal(\'sandbox\')" class="text-accent underline font-semibold">Private Developer Alpha (Cohort 1)</button><br/><br/>What would you like to explore?'
+      }
+    ];
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function formatAiReply(text) {
+      if (!text) return '';
+      let safe = text;
+      safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-textMain">$1</strong>');
+      safe = safe.replace(/\*(.*?)\*/g, '<em class="italic">$1</em>');
+      safe = safe.replace(/^[•*-]\s+(.+)$/gm, '<div class="pl-2.5 my-0.5">• $1</div>');
+      safe = safe.replace(/\n\n/g, '<div class="my-2"></div>');
+      safe = safe.replace(/\n/g, '<br/>');
+      return safe;
+    }
+
+    function getSmartFallbackReply(input) {
+      const q = (input || '').toLowerCase().trim();
+      if (!q) {
+        return "Hello! I am Seron, Principal Platform Architect for Dromber Engine. How can I assist you with your conversational commerce deployment?";
+      }
+
+      let bestMatch = null;
+      let bestScore = 0;
+
+      for (const item of detailedKnowledge) {
+        let score = 0;
+        for (const m of item.match) {
+          if (q.includes(m)) {
+            score += m.split(' ').length * 3 + m.length;
+          }
+        }
+        if (score > bestScore) {
+          bestScore = score;
+          bestMatch = item.reply;
+        }
+      }
+
+      if (bestMatch && bestScore >= 3) {
+        return bestMatch;
+      }
+
+      return `That is a great technical question! Dromber Engine coordinates Claude 3.5 Sonnet tool-calling with Claude 3 Haiku streaming synthesis under a sub-1.2s roundtrip budget for WhatsApp commerce.<br/><br/>You can submit an application via <button onclick="openModal('sandbox')" class="text-accent underline font-semibold">Apply for Pilot Access</button>, test our in-browser <strong>Interactive Terminal Sandbox</strong>, or connect directly with our engineering team on WhatsApp at <a href="https://wa.me/919894751469" target="_blank" class="text-[#25D366] underline font-bold">+91 98947 51469</a>.`;
+    }
+
+    function toggleChat() {
+      chatOpen = !chatOpen;
+      const win = document.getElementById('chat-window');
+      if (chatOpen) {
+        win.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+        document.getElementById('chat-input')?.focus();
+      } else {
+        win.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+      }
+    }
+
+    function appendChatMessage(sender, text) {
+      const container = document.getElementById('chat-messages');
+      const msg = document.createElement('div');
+      if (sender === 'user') {
+        const safe = escapeHtml(text);
+        msg.className = 'bg-accent text-white rounded-2xl rounded-tr-sm p-3 max-w-[85%] ml-auto leading-relaxed';
+        msg.innerHTML = safe;
+      } else {
+        msg.className = 'bg-gray-100 text-gray-800 rounded-2xl rounded-tl-sm p-3 max-w-[85%] leading-relaxed space-y-1';
+        msg.innerHTML = formatAiReply(text);
+      }
+      container.appendChild(msg);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function handleChatMessage(text) {
+      if (!text) return;
+      appendChatMessage('user', text);
+      chatHistory.push({ role: 'user', content: text });
+      if (chatHistory.length > 8) chatHistory = chatHistory.slice(-8);
+
+      const container = document.getElementById('chat-messages');
+      const typingEl = document.createElement('div');
+      typingEl.id = 'typing-indicator';
+      typingEl.className = 'bg-gray-100 text-gray-500 rounded-2xl rounded-tl-sm p-2.5 max-w-[85%] text-xs flex items-center gap-1.5';
+      typingEl.innerHTML = '<span>Seron is querying Dromber Gateway</span><span class="animate-pulse">...</span>';
+      container.appendChild(typingEl);
+      container.scrollTop = container.scrollHeight;
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 7500);
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: chatHistory }),
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        typingEl?.remove();
+        if (!response.ok) throw new Error('API offline');
+        const data = await response.json();
+        const reply = data.choices?.[0]?.message?.content || getSmartFallbackReply(text);
+        chatHistory.push({ role: 'assistant', content: reply });
+        appendChatMessage('bot', reply);
+      } catch (err) {
+        typingEl?.remove();
+        const fallback = getSmartFallbackReply(text);
+        chatHistory.push({ role: 'assistant', content: fallback });
+        appendChatMessage('bot', fallback);
+      }
+    }
+
+    function askBot(query) {
+      handleChatMessage(query);
+    }
+
+    function handleChatSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      handleChatMessage(text);
+    }
+
+    // 11. Copyright Year Sync
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

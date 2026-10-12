@@ -172,8 +172,8 @@ async function processChatRequest(body, clientIp) {
   const lastUserMessage = messages.filter(m => m.role === 'user').pop();
   const userQuery = lastUserMessage ? String(lastUserMessage.content || '').substring(0, 1000) : '';
 
-  const geminiKey = process.env.GEMINI_API_KEY;
   const openrouterKey = process.env.OPENROUTER_API_KEY;
+  const geminiKey = process.env.GEMINI_API_KEY;
   let reply = "";
 
   const llmHistory = messages.slice(-6).map(m => ({
@@ -186,7 +186,40 @@ async function processChatRequest(body, clientIp) {
     ...llmHistory
   ];
 
-  // Priority 1: Direct Google Gemini 2.5 Flash
+  // Priority 1: OpenRouter DeepSeek-V3 (Ultra low-cost, $0.14/M tokens, premier intelligence)
+  if (!reply && openrouterKey && openrouterKey.startsWith('sk-or-')) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6500);
+
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${openrouterKey}`,
+          'HTTP-Referer': 'https://dromber.site',
+          'X-Title': 'Dromber Engine'
+        },
+        body: JSON.stringify({
+          model: 'deepseek/deepseek-chat',
+          messages: formattedMessages,
+          max_tokens: 450,
+          temperature: 0.7
+        }),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.choices && data.choices[0] && data.choices[0].message) {
+          reply = sanitizeLlmReply(data.choices[0].message.content || "");
+        }
+      }
+    } catch (e) {}
+  }
+
+  // Priority 2: Direct Google Gemini 2.5 Flash Fallback
   if (!reply && geminiKey && geminiKey.startsWith('AIzaSy')) {
     try {
       const controller = new AbortController();
@@ -225,40 +258,7 @@ async function processChatRequest(body, clientIp) {
     } catch (e) {}
   }
 
-  // Priority 2: Direct OpenRouter Free Models
-  if (!reply && openrouterKey && openrouterKey.startsWith('sk-or-')) {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6500);
-
-      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${openrouterKey}`,
-          'HTTP-Referer': 'https://dromber.site',
-          'X-Title': 'Dromber Engine'
-        },
-        body: JSON.stringify({
-          models: ["nvidia/nemotron-3-ultra-550b-a55b:free", "mistralai/mistral-small-24b-instruct-2501:free"],
-          messages: formattedMessages,
-          max_tokens: 500,
-          temperature: 0.7
-        }),
-        signal: controller.signal
-      });
-      clearTimeout(timeoutId);
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.choices && data.choices[0] && data.choices[0].message) {
-          reply = sanitizeLlmReply(data.choices[0].message.content || "");
-        }
-      }
-    } catch (e) {}
-  }
-
-  // Deterministic Domain Engine Fallback (guaranteed instant, zero cost)
+  // Priority 3: Deterministic Domain Engine Fallback (guaranteed instant, zero cost)
   if (!reply) {
     reply = evaluateSeronQuery(userQuery);
   }

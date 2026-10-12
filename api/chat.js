@@ -174,7 +174,6 @@ async function processChatRequest(body, clientIp) {
 
   const defaultKey = Buffer.from('c2stb3ItdjEtYjM2N2U4OTllOGQxZjQ3ODg0OTI5NzA4OWE4MTM2ZTkxYmMwNTkxMTc0YTE1NWJkOGE5YjQ5ZmYzNmY1MDhlZQ==', 'base64').toString('utf-8');
   const openrouterKey = process.env.OPENROUTER_API_KEY || defaultKey;
-  const geminiKey = process.env.GEMINI_API_KEY;
   let reply = "";
 
   const llmHistory = messages.slice(-6).map(m => ({
@@ -220,40 +219,35 @@ async function processChatRequest(body, clientIp) {
     } catch (e) {}
   }
 
-  // Priority 2: Direct Google Gemini 2.5 Flash Fallback
-  if (!reply && geminiKey && geminiKey.startsWith('AIzaSy')) {
+  // Priority 2: Anthropic Claude API (if ANTHROPIC_API_KEY configured)
+  const anthropicKey = process.env.ANTHROPIC_API_KEY;
+  if (!reply && anthropicKey && anthropicKey.startsWith('sk-ant-')) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 6500);
 
-      const geminiContents = llmHistory.map(m => ({
-        role: m.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: m.content }]
-      }));
-      if (geminiContents.length === 0 || geminiContents[0].role !== 'user') {
-        geminiContents.unshift({ role: 'user', parts: [{ text: userQuery || 'Hello' }] });
-      }
-
-      const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`, {
+      const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': anthropicKey,
+          'anthropic-version': '2023-06-01'
+        },
         body: JSON.stringify({
-          system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
-          contents: geminiContents,
-          generationConfig: {
-            maxOutputTokens: 600,
-            temperature: 0.7,
-            thinkingConfig: { thinkingBudget: 0 }
-          }
+          model: 'claude-3-5-haiku-20241022',
+          system: SYSTEM_PROMPT,
+          messages: formattedMessages.filter(m => m.role !== 'system'),
+          max_tokens: 450,
+          temperature: 0.7
         }),
         signal: controller.signal
       });
       clearTimeout(timeoutId);
 
-      if (geminiRes.ok) {
-        const data = await geminiRes.json();
-        if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
-          reply = sanitizeLlmReply(data.candidates[0].content.parts[0].text || "");
+      if (anthropicRes.ok) {
+        const data = await anthropicRes.json();
+        if (data.content && data.content[0] && data.content[0].text) {
+          reply = sanitizeLlmReply(data.content[0].text);
         }
       }
     } catch (e) {}
@@ -281,8 +275,12 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'anonymous';
-  const body = req.body || {};
+  const headers = req.headers || {};
+  const clientIp = headers['x-forwarded-for'] || headers['x-real-ip'] || (req.socket && req.socket.remoteAddress) || 'anonymous';
+  let body = req.body || {};
+  if (typeof body === 'string') {
+    try { body = JSON.parse(body); } catch (e) {}
+  }
 
   try {
     const result = await processChatRequest(body, clientIp);

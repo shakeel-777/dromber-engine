@@ -1,0 +1,25 @@
+# Local environment and runtime
+.vercel
+.netlify
+.env
+.env.*
+__pycache__/
+
+# Backups & old artifacts
+*.bak
+*backup*
+*.handbook_backup
+*.apple_light_backup
+*.pre_*
+*.log
+stitch*.html
+DESIGN.md
+current_style.css
+dev_server.py
+
+# Screenshots & runs
+strix_runs/
+.strix/
+screenshot*.png
+full-page.png
+progress.txt

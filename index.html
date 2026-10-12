@@ -14,7 +14,6 @@
 
   <!-- Core CDNs (Deferred for Zero Render-Blocking) -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://checkout.razorpay.com/v1/checkout.js" crossorigin="anonymous" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" integrity="sha384-SALc35EccAf6RzGw4iNsyj7kTPr33K7RoGzYu+7heZhT8s0GZouafRiCg1qy44AS" crossorigin="anonymous" defer></script>
 
   <!-- Tailwind Configuration -->
@@ -149,7 +148,7 @@
       <div class="hidden md:flex items-center gap-8 text-[13px] font-semibold text-textMuted">
         <a href="#engineering" class="hover:text-textMain transition-colors">Architecture</a>
         <a href="#calculator" class="hover:text-textMain transition-colors">Token Throughput</a>
-        <a href="#curriculum" class="hover:text-textMain transition-colors">Agent Pipeline</a>
+        <a href="#pipeline" class="hover:text-textMain transition-colors">Agent Pipeline</a>
         <a href="#terminal" class="hover:text-textMain transition-colors">Developer API</a>
         <a href="#ecosystem" class="hover:text-textMain transition-colors">Platform Tiers</a>
       </div>
@@ -167,7 +166,7 @@
     <div id="mobile-nav" class="hidden md:hidden border-b border-black/10 bg-white/95 px-6 py-6 space-y-3 font-semibold text-[15px]">
       <a href="#engineering" onclick="toggleMobileNav()" class="block py-1">Architecture</a>
       <a href="#calculator" onclick="toggleMobileNav()" class="block py-1">Token Throughput</a>
-      <a href="#curriculum" onclick="toggleMobileNav()" class="block py-1">Agent Pipeline</a>
+      <a href="#pipeline" onclick="toggleMobileNav()" class="block py-1">Agent Pipeline</a>
       <a href="#terminal" onclick="toggleMobileNav()" class="block py-1">Developer API</a>
       <a href="#ecosystem" onclick="toggleMobileNav()" class="block py-1">Platform Tiers</a>
       <button onclick="toggleMobileNav(); openModal('sandbox');" class="w-full bg-accent text-white py-3 rounded-xl font-bold mt-2">
@@ -426,7 +425,7 @@
   </section>
 
   <!-- AGENT PIPELINE ARCHITECTURE -->
-  <section id="curriculum" class="py-32 bg-white relative">
+  <section id="pipeline" class="py-32 bg-white relative">
     <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-16">
       
       <div class="lg:col-span-5">

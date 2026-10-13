@@ -14,11 +14,12 @@
     }
   ],
   "rewrites": [
+    { "source": "/console", "destination": "/console.html" },
     { "source": "/privacy", "destination": "/privacy.html" },
     { "source": "/terms", "destination": "/terms.html" },
     { "source": "/disclaimer", "destination": "/disclaimer.html" },
     { "source": "/shipping", "destination": "/terms.html" },
     { "source": "/refund", "destination": "/terms.html" },
-    { "source": "/contact", "destination": "/terms.html" }
+    { "source": "/contact", "destination": "/contact/index.html" }
   ]
 }

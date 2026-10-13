@@ -152,17 +152,21 @@
         </div>
       </a>
 
-      <div class="hidden md:flex items-center gap-8 text-[13px] font-semibold text-textMuted">
+      <div class="hidden md:flex items-center gap-7 text-[13px] font-semibold text-textMuted">
         <a href="#engineering" class="hover:text-textMain transition-colors">Architecture</a>
         <a href="#calculator" class="hover:text-textMain transition-colors">Token Throughput</a>
         <a href="#pipeline" class="hover:text-textMain transition-colors">Agent Pipeline</a>
         <a href="#terminal" class="hover:text-textMain transition-colors">Developer API</a>
-        <a href="#ecosystem" class="hover:text-textMain transition-colors">Platform Tiers</a>
+        <a href="#ecosystem" class="hover:text-textMain transition-colors">Tiers</a>
+        <a href="/console" class="text-accent hover:text-accentHover transition-colors flex items-center gap-1 font-bold">Console <span class="text-[9px] bg-accent/10 px-1.5 py-0.5 rounded-full uppercase">Live</span></a>
       </div>
 
-      <div class="flex items-center gap-3">
-        <button onclick="openModal('sandbox')" class="hidden sm:inline-flex items-center justify-center bg-textMain hover:bg-black text-white px-5 py-2.5 rounded-full text-[13px] font-semibold shadow-md active:scale-95 transition-all">
-          Get Sandbox API Key
+      <div class="flex items-center gap-2.5">
+        <a href="/console" class="hidden sm:inline-flex items-center justify-center bg-accent hover:bg-accentHover text-white px-4 py-2 rounded-full text-[12px] font-semibold shadow-sm active:scale-95 transition-all">
+          Launch Console ↗
+        </a>
+        <button onclick="openModal('sandbox')" class="hidden sm:inline-flex items-center justify-center bg-textMain hover:bg-black text-white px-4 py-2 rounded-full text-[12px] font-semibold shadow-sm active:scale-95 transition-all">
+          Get API Key
         </button>
         <button onclick="toggleMobileNav()" aria-label="Toggle Navigation" class="md:hidden w-10 h-10 rounded-full flex items-center justify-center bg-black/5 text-textMain">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
@@ -171,6 +175,7 @@
     </div>
 
     <div id="mobile-nav" class="hidden md:hidden border-b border-black/10 bg-white/95 px-6 py-6 space-y-3 font-semibold text-[15px]">
+      <a href="/console" onclick="toggleMobileNav()" class="block py-1 text-accent font-bold">Launch Developer Console ↗</a>
       <a href="#engineering" onclick="toggleMobileNav()" class="block py-1">Architecture</a>
       <a href="#calculator" onclick="toggleMobileNav()" class="block py-1">Token Throughput</a>
       <a href="#pipeline" onclick="toggleMobileNav()" class="block py-1">Agent Pipeline</a>
@@ -222,7 +227,7 @@
       </h1>
 
       <p class="mt-8 text-lg md:text-[21px] text-[#424245] max-w-3xl font-medium tracking-tight leading-[1.6]">
-        Deploy stateful, multi-agent shopping engines on the WhatsApp Business Cloud API. Powered by Claude 3.5 Sonnet for real-time semantic parsing, deterministic retail catalog tool-calling, and automated affiliate attribution.
+        Deploy stateful, multi-agent shopping engines on the WhatsApp Business Cloud API. Powered by Claude 3.5 Sonnet for real-time semantic parsing, deterministic retail catalog tool-calling, and programmatic commerce attribution.
       </p>
 
       <div class="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-6 pt-6 border-t border-black/[0.08] w-full max-w-3xl">
@@ -280,7 +285,7 @@
               <div class="text-xs font-mono text-green-400 uppercase tracking-widest mb-2">Deterministic Tool Calling</div>
               <h3 class="text-[25px] font-bold tracking-tight mb-3">Zero-Hallucination Retail Catalog Interoperability</h3>
               <p class="text-[15px] text-gray-400 leading-relaxed max-w-xl font-normal">
-                Direct API bindings to Amazon India PA-API, Flipkart Affiliate API, and Cuelinks networks. Claude 3.5 Sonnet extracts precise product parameters and invokes deterministic inventory lookup functions, verifying real-time stock, pricing, and 24-hr cart attribution before generating links.
+                Direct API bindings to Amazon India PA-API, Flipkart Retail Commerce API, and Cuelinks networks. Claude 3.5 Sonnet extracts precise product parameters and invokes deterministic inventory lookup functions, verifying real-time stock, pricing, and 24-hr cart attribution before generating links.
               </p>
             </div>
           </div>
@@ -325,7 +330,7 @@
               <div class="text-xs font-mono text-[#34c759] uppercase tracking-widest mb-2">Compliance &amp; Attribution</div>
               <h3 class="text-[25px] font-bold tracking-tight mb-3">Automated Section 194H TDS &amp; ASCI Disclosures</h3>
               <p class="text-[15px] text-gray-400 leading-relaxed max-w-xl font-normal">
-                Every deep link synthesized by Dromber programmatically binds ASCI-compliant advertising tags (#ad, #affiliate) and injects PAN-verified Section 194H (2%/5%) and GST tracking parameters for clean financial auditability.
+                Every deep link synthesized by Dromber programmatically binds ASCI-compliant commercial tags (#sponsored, #ad) and injects PAN-verified Section 194H (2%/5%) and GST tracking parameters for clean financial auditability.
               </p>
             </div>
           </div>
@@ -507,7 +512,7 @@
           <div id="mod3-content" class="hidden mt-4 pt-4 border-t border-black/[0.06] text-[14px] text-textMuted leading-relaxed space-y-2">
             <p>Invokes external e-commerce inventory endpoints with strict JSON schemas. Eliminates hallucinated pricing or out-of-stock SKUs before generating recommendations.</p>
             <ul class="list-disc pl-5 space-y-1 text-textMain text-[13px] font-medium pt-2">
-              <li>Direct Amazon India PA-API, Flipkart Affiliate, and Cuelinks connectors</li>
+              <li>Direct Amazon India PA-API, Flipkart Retail, and Cuelinks Commerce connectors</li>
               <li>Real-time stock level validation and 24-hr cart cookie verification</li>
             </ul>
           </div>
@@ -539,7 +544,7 @@
             <span id="mod5-icon" class="text-xl font-mono text-textMuted">+</span>
           </div>
           <div id="mod5-content" class="hidden mt-4 pt-4 border-t border-black/[0.06] text-[14px] text-textMuted leading-relaxed space-y-2">
-            <p>Resolves tracked affiliate deep links with integrated Section 194H TDS (2%/5%) metadata and compliant ASCI disclosure prefixes (#ad, #affiliate).</p>
+            <p>Resolves verified merchant deep links with integrated Section 194H TDS (2%/5%) metadata and compliant commercial disclosure prefixes (#sponsored, #ad).</p>
             <ul class="list-disc pl-5 space-y-1 text-textMain text-[13px] font-medium pt-2">
               <li>Cryptographic conversion tagging for publisher revenue reconciliation</li>
               <li>Strict regulatory compliance across Indian advertising and direct tax standards</li>
@@ -727,7 +732,7 @@
         <div class="border border-black/[0.08] rounded-2xl p-6 bg-bgLight/30">
           <h4 class="font-bold text-[16px] text-textMain mb-2">How does Dromber handle regulatory compliance and tax attribution?</h4>
           <p class="text-[14px] text-textMuted leading-relaxed">
-            Every generated deep link passes through our attribution compiler, automatically appending required ASCI disclosure hashtags (#ad, #affiliate) and recording Section 194H TDS (2% or 5%) and GST identifiers in the conversion webhook telemetry.
+            Every generated deep link passes through our attribution compiler, automatically appending required ASCI disclosure hashtags (#sponsored, #ad) and recording Section 194H TDS (2% or 5%) and GST identifiers in the conversion webhook telemetry.
           </p>
         </div>
       </div>
@@ -745,7 +750,7 @@
           <span class="font-bold text-lg">Dromber.</span>
         </div>
         <p class="text-[14px] text-gray-400 max-w-sm leading-relaxed mb-6">
-          Autonomous conversational commerce and real-time affiliate attribution infrastructure engineered for high-throughput messaging channels.
+          Autonomous conversational commerce and real-time merchant attribution infrastructure engineered for high-throughput messaging channels.
         </p>
         <div class="text-[11px] font-mono text-gray-500">
           WhatsApp Cloud API Partner • Anthropic Claude Tier • 256-Bit SSL
@@ -1107,9 +1112,9 @@
   --------------------------------------------------
   <span class="text-white font-bold">TOTAL OBSERVED ROUNDTRIP:</span>                 <span class="text-accent font-bold">1,108ms</span> (Within SLA)`,
       'compliance': `[AUTOMATED REGULATORY ATTRIBUTION ENGINE]
-  • <strong>Section 194H TDS:</strong> Deducts statutory 2% TDS on annual affiliate revenue &gt;₹15,000 when PAN is verified.
+  • <strong>Section 194H TDS:</strong> Deducts statutory 2% TDS on annual referral revenue &gt;₹15,000 when PAN is verified.
   • <strong>Section 206AA Safeguard:</strong> Automatically enforces 20% penal TDS flag if publisher PAN is missing.
-  • <strong>ASCI Compliance:</strong> Prepends mandatory transparent tag (#ad / #affiliate) to generated deep links.
+  • <strong>ASCI Compliance:</strong> Prepends mandatory commercial disclosure tag (#sponsored / #ad) to generated deep links.
   • <strong>Attribution Token:</strong> Cryptographically signed URL with 24-hr session cookie preservation.`,
       'clear': 'CLEAR'
     };
@@ -1296,7 +1301,7 @@
       },
       {
         match: ['tool', 'tools', 'schema', 'tool calling', 'pa-api', 'amazon', 'flipkart', 'cuelinks', 'catalog', 'inventory'],
-        reply: 'Zero hallucinated pricing or out-of-stock SKUs:<br/><br/>• Claude 3.5 Sonnet emits deterministic JSON function arguments.<br/>• Dromber executes the call directly against Amazon Product Advertising API (PA-API v5), Flipkart Affiliate API, or Cuelinks aggregators.<br/>• Live pricing, prime eligibility, and stock status are verified before generating response recommendations.<br/>• Tracked 24-hr cart cookies and attribution hashes are appended automatically.'
+        reply: 'Zero hallucinated pricing or out-of-stock SKUs:<br/><br/>• Claude 3.5 Sonnet emits deterministic JSON function arguments.<br/>• Dromber executes the call directly against Amazon Product Advertising API (PA-API v5), Flipkart Retail API, or Cuelinks aggregators.<br/>• Live pricing, prime eligibility, and stock status are verified before generating response recommendations.<br/>• Tracked 24-hr cart cookies and attribution hashes are appended automatically.'
       },
       {
         match: ['latency', 'speed', 'sla', 'fast', 'budget', 'ms', 'seconds', 'timing'],
@@ -1308,11 +1313,11 @@
       },
       {
         match: ['tax', 'tds', '194h', 'compliance', 'asci', 'legal', 'law', '206aa', 'gst'],
-        reply: 'Automated Indian statutory & advertising compliance engine:<br/><br/>• <strong>Section 194H TDS:</strong> Injects statutory 2% TDS metadata tracking on annual affiliate revenue exceeding ₹15,000.<br/>• <strong>Section 206AA Safeguard:</strong> Automatically enforces 20% penal rate flags if publisher PAN is unverified.<br/>• <strong>ASCI Transparency:</strong> Cryptographically prepends mandatory consumer disclosures (#ad, #affiliate) to outbound deep links.'
+        reply: 'Automated Indian statutory & advertising compliance engine:<br/><br/>• <strong>Section 194H TDS:</strong> Injects statutory 2% TDS metadata tracking on annual merchant referral revenue exceeding ₹15,000.<br/>• <strong>Section 206AA Safeguard:</strong> Automatically enforces 20% penal rate flags if publisher PAN is unverified.<br/>• <strong>ASCI Transparency:</strong> Cryptographically prepends mandatory consumer disclosures (#sponsored, #ad) to outbound deep links.'
       },
       {
         match: ['api key', 'api token', 'get key', 'access', 'sandbox key', 'live test', 'signup', 'register', 'public api'],
-        reply: 'Dromber Engine is currently running a <strong>Private Developer Alpha (Cohort 1)</strong> for select WhatsApp community channels, publishers, and e-commerce affiliates.<br/><br/>To preserve strict sub-1.2s latency SLAs, developer credentials and dedicated sandbox environments are provisioned on a gated cohort basis.<br/><br/>You can submit your channel details via the <button onclick="openModal(\'sandbox\')" class="text-accent underline font-semibold">Apply for Pilot Access</button> modal, test the in-browser <strong>Terminal Sandbox</strong>, or connect directly with our engineering team on WhatsApp at <a href="https://wa.me/919894751469" target="_blank" class="text-[#25D366] underline font-bold">+91 98947 51469</a>.'
+        reply: 'Dromber Engine is currently running a <strong>Private Developer Alpha (Cohort 1)</strong> for select WhatsApp community channels, publishers, and commerce networks.<br/><br/>To preserve strict sub-1.2s latency SLAs, developer credentials and dedicated sandbox environments are provisioned on a gated cohort basis.<br/><br/>You can submit your channel details via the <button onclick="openModal(\'sandbox\')" class="text-accent underline font-semibold">Apply for Pilot Access</button> modal, test the in-browser <strong>Terminal Sandbox</strong>, or connect directly with our engineering team on WhatsApp at <a href="https://wa.me/919894751469" target="_blank" class="text-[#25D366] underline font-bold">+91 98947 51469</a>.'
       },
       {
         match: ['pricing', 'cost', 'tiers', 'sandbox', 'price', 'plan', 'pro', 'enterprise', 'free'],

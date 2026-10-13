@@ -24,7 +24,7 @@ function isRateLimited(ip) {
 const KNOWLEDGE_BASE = [
   {
     intents: ["what is dromber", "what do you do", "overview", "product", "platform", "about"],
-    reply: "**Dromber Engine** is an autonomous conversational commerce and real-time affiliate attribution infrastructure for messaging platforms (WhatsApp Business Cloud API & Telegram).\n\n• **Core Pipeline**: Ingests chat webhooks, runs semantic intent extraction via Claude 3.5 Sonnet, matches product catalogs via deterministic tool calling, and generates compliant deep links in under 1.2s.\n• **Target Audience**: Digital publishers, retail aggregators, and high-volume e-commerce networks looking for programmatic conversion loops."
+    reply: "**Dromber Engine** is an autonomous conversational commerce and real-time merchant attribution infrastructure for messaging platforms (WhatsApp Business Cloud API & Telegram).\n\n• **Core Pipeline**: Ingests chat webhooks, runs semantic intent extraction via Claude 3.5 Sonnet, matches product catalogs via deterministic tool calling, and generates compliant deep links in under 1.2s.\n• **Target Audience**: Digital publishers, retail aggregators, and high-volume e-commerce networks looking for programmatic conversion loops."
   },
   {
     intents: ["claude", "anthropic", "llm", "ai model", "model tier", "how do you use claude"],
@@ -44,7 +44,7 @@ const KNOWLEDGE_BASE = [
   },
   {
     intents: ["api key", "api token", "get key", "access", "sandbox key", "live test", "signup", "register", "public api"],
-    reply: "Dromber Engine is currently running a **Private Developer Alpha (Cohort 1)** for select WhatsApp community channels and e-commerce affiliates.\n\nTo preserve our sub-1.2s latency SLA, developer sandbox keys and instances are provisioned on a gated cohort basis.\n\nYou can submit an application via the **Apply for Pilot Access** modal on the website, explore the in-browser **Terminal Sandbox**, or connect directly with our engineering team on WhatsApp at **+91 98947 51469**."
+    reply: "Dromber Engine is currently running a **Private Developer Alpha (Cohort 1)** for select WhatsApp community channels and commerce operators.\n\nTo preserve our sub-1.2s latency SLA, developer sandbox keys and instances are provisioned on a gated cohort basis.\n\nYou can submit an application via the **Apply for Pilot Access** modal on the website, explore the in-browser **Terminal Sandbox**, or connect directly with our engineering team on WhatsApp at **+91 98947 51469**."
   },
   {
     intents: ["api", "endpoint", "curl", "docs", "integration", "developer", "sdk"],
@@ -52,11 +52,11 @@ const KNOWLEDGE_BASE = [
   },
   {
     intents: ["networks", "amazon", "flipkart", "meesho", "cuelinks", "catalog"],
-    reply: "Dromber natively integrates with major regional and global commerce protocols:\n\n• **Amazon India PA-API**: Real-time pricing, stock verification, and 24-hr cart attribution.\n• **Flipkart Affiliate API**: Large-scale consumer electronics and apparel feed ingestion.\n• **Cuelinks / Aggregators**: Dynamic deep-link resolution across 1,000+ D2C Indian brands (Myntra, Ajio, Nykaa)."
+    reply: "Dromber natively integrates with major regional and global commerce protocols:\n\n• **Amazon India PA-API**: Real-time pricing, stock verification, and 24-hr cart attribution.\n• **Flipkart Retail API**: Large-scale consumer electronics and apparel feed ingestion.\n• **Cuelinks / Aggregators**: Dynamic deep-link resolution across 1,000+ D2C Indian brands (Myntra, Ajio, Nykaa)."
   },
   {
     intents: ["tax", "gst", "tds", "194h", "compliance", "asci", "legal"],
-    reply: "Dromber automates regulatory and taxation attribution:\n\n• **Section 194H**: Maps 2% / 5% TDS metadata and PAN verification tags directly to conversion events.\n• **ASCI Compliance**: Programmatically appends required advertising disclosures to AI-generated messages.\n• **Auditing**: Provides full cryptographic attribution trails for all affiliate commissions."
+    reply: "Dromber automates regulatory and taxation attribution:\n\n• **Section 194H**: Maps 2% / 5% TDS metadata and PAN verification tags directly to conversion events.\n• **ASCI Compliance**: Programmatically appends required advertising disclosures to AI-generated messages.\n• **Auditing**: Provides full cryptographic attribution trails for all merchant referrals."
   },
   {
     intents: ["contact", "founder", "whatsapp", "support", "talk", "team"],
@@ -96,13 +96,13 @@ function evaluateSeronQuery(query) {
 }
 
 const SYSTEM_PROMPT = `You are Seron, Principal Platform Architect and Technical Concierge for Dromber Engine (https://dromber.site).
-Dromber Engine is an autonomous conversational commerce and real-time affiliate attribution infrastructure purpose-built for high-throughput messaging channels like the WhatsApp Business Cloud API.
+Dromber Engine is an autonomous conversational commerce and real-time merchant attribution infrastructure purpose-built for high-throughput messaging channels like the WhatsApp Business Cloud API.
 
 CORE ARCHITECTURE SPECIFICATIONS:
 1. Multi-Agent Cognitive Pipeline:
    - Ingestion: High-concurrency event webhooks from WhatsApp Business Cloud API and Telegram Bot API.
    - Semantic Parsing (Claude 3.5 Sonnet): Disambiguates code-mixed inputs (e.g., Hinglish, colloquial chat), extracting structured buyer intent, price boundaries, and product category entities.
-   - Deterministic Tool Calling: Invokes inventory and affiliate catalog APIs (Amazon India PA-API, Flipkart Affiliate API, Cuelinks DeepLink API) with zero hallucinations.
+   - Deterministic Tool Calling: Invokes inventory and retail catalog APIs (Amazon India PA-API, Flipkart Retail API, Cuelinks DeepLink API) with zero hallucinations.
    - Low-Latency Conversational Synthesis (Claude 3 Haiku): Delivers streaming recommendations under a strict <1.2s roundtrip latency SLA.
 2. Latency Optimization & Token Economics:
    - Leverages Anthropic Prompt Caching for system prompts and catalog schema definitions, reducing TTFT by ~70% and slashing input token overhead.

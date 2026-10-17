@@ -60,7 +60,7 @@ const KNOWLEDGE_BASE = [
   },
   {
     intents: ["contact", "founder", "whatsapp", "support", "talk", "team"],
-    reply: "You can connect directly with our engineering team:\n\n• **Founder WhatsApp**: **+91 98947 51469**\n• **Official Email**: **founder@dromber.site** (or dromber7@gmail.com)\n• We offer 1-on-1 architecture reviews and customized pilot sandbox deployments."
+    reply: "You can connect directly with our engineering team:\n\n• **Founder WhatsApp**: **+91 98947 51469**\n• **Official Email**: **founder@dromber.site**\n• We offer 1-on-1 architecture reviews and customized pilot sandbox deployments."
   },
   {
     intents: ["hi", "hello", "hey", "namaste", "good morning", "good evening", "who are you"],
